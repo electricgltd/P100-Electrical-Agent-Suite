@@ -1,0 +1,81 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {
+      "Get_Page_Content": {
+        "type": "ApiConnection",
+        "inputs": {
+          "host": {
+            "connection": {
+              "name": "@parameters('$connections')['copilotnotebook']['connectionId']"
+            }
+          },
+          "method": "get",
+          "path": "/pages/@{triggerOutputs()?['body/id']}"
+        },
+        "runAfter": {},
+        "metadata": {
+          "operationMetadataId": "getPageContent"
+        }
+      },
+      "Create_Loop_Page": {
+        "type": "ApiConnection",
+        "inputs": {
+          "host": {
+            "connection": {
+              "name": "@parameters('$connections')['loop']['connectionId']"
+            }
+          },
+          "method": "post",
+          "path": "/workspaces/{workspaceId}/pages",
+          "body": {
+            "title": "GPT-5 Chat - @{triggerOutputs()?['body/title']} (@{utcNow()})",
+            "content": "@{body('Get_Page_Content')?['content']}"
+          }
+        },
+        "runAfter": {
+          "Get_Page_Content": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "createLoopPage"
+        }
+      }
+    },
+    "triggers": {
+      "When_a_new_page_is_created": {
+        "type": "ApiConnectionWebhook",
+        "inputs": {
+          "host": {
+            "connection": {
+              "name": "@parameters('$connections')['copilotnotebook']['connectionId']"
+            }
+          },
+          "path": "/subscriptions/@{encodeURIComponent(triggerOutputs()?['body/id'])}/pages",
+          "method": "get"
+        },
+        "metadata": {
+          "operationMetadataId": "triggerNewPage"
+        }
+      }
+    },
+    "outputs": {}
+  },
+  "parameters": {
+    "$connections": {
+      "value": {
+        "copilotnotebook": {
+          "connectionId": "/providers/Microsoft.PowerApps/apis/shared_copilotnotebook/connections/shared-copilotnotebook-123456789",
+          "connectionName": "shared-copilotnotebook",
+          "id": "/providers/Microsoft.PowerApps/apis/shared_copilotnotebook"
+        },
+        "loop": {
+          "connectionId": "/providers/Microsoft.PowerApps/apis/shared_loop/connections/shared-loop-123456789",
+          "connectionName": "shared-loop",
+          "id": "/providers/Microsoft.PowerApps/apis/shared_loop"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,44 @@
+# --- OS / Office temp ---
+Thumbs.db
+desktop.ini
+~$*
+
+# --- IDE cache ---
+.vscode/
+*.user
+
+# --- Build & exports ---
+/_exports/
+/_artifacts/
+/bin/
+/obj/
+*.log
+# --- Node/Yarn ---
+node_modules/
+package-lock.json
+yarn.lock
+
+# --- Power Platform canvas binaries (keep source instead) ---
+*.msapp
+
+# --- Secrets & env files (DO NOT COMMIT) ---
+.env
+.env.*
+*.secret
+*.secrets
+*.pfx
+*.snk
+*.key
+secrets.json
+appsettings.Development.json
+PrivateSettings.json
+
+# --- Misc shortcuts ---
+*.lnk
+*.url
+
+# --- Archives & large binary bundles ---
+*.zip
+*.7z
+*.tar
+*.gz

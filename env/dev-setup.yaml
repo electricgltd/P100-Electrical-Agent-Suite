@@ -1,0 +1,26 @@
+# Windows Package Manager Configuration (public-safe)
+# Docs: https://learn.microsoft.com/windows/package-manager/configuration
+manifestVersion: 1.6.0
+components:
+  - component: Microsoft.WinGet.DSC/WinGetPackage
+    id: Git.Git
+    intent: install
+  - component: Microsoft.WinGet.DSC/WinGetPackage
+    id: Microsoft.PowerShell
+    intent: install
+  - component: Microsoft.WinGet.DSC/WinGetPackage
+    id: Microsoft.PowerPlatformCLI
+    intent: install
+  - component: Microsoft.WinGet.DSC/WinGetPackage
+    id: Microsoft.VisualStudioCode
+    intent: install
+  - component: Microsoft.WinGet.DSC/WinGetPackage
+    id: OpenJS.NodeJS.LTS
+    intent: install
+  - component: Microsoft.WinGet.DSC/WinGetPackage
+    id: GitHub.GitHubDesktop
+    intent: install
+  # Optional: secret scanning
+  - component: Microsoft.WinGet.DSC/WinGetPackage
+    id: zricethezav.gitleaks
+    intent: install

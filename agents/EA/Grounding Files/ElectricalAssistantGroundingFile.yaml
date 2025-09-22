@@ -1,0 +1,51 @@
+ElectricalAssistantGroundingFile:
+  references:
+  - ADHDNotebook
+  - EICRDocuments
+  - ElectricGLtd
+  - ProjectBeren
+  - GuidanceNote3
+  - EIC_Certificate
+  - MWC_Certificate
+  sections:
+  - MasterNarrative:
+      description: Philosophy and overarching structure guiding work and accreditation
+        alignment.
+  - DeepLife:
+      description: Vision and structure for a meaningful life and work.
+      subsections:
+      - Discipline
+      - Values
+      - Control
+      - Vision
+  - ADHD:
+      description: Notes and reflections on suspected ADHD and its impact on work
+        processes.
+  - QuotingAndStatementOfWorks:
+      description: Development of quoting model and use of Copilot Agent for pricing.
+  - EICRProcess:
+      description: End-to-end process for Electrical Installation Condition Reports.
+      subsections:
+      - PreInspectionDiscussions
+      - PreInspectionFocusAndSampling
+      - EquipmentChecks
+      - InspectionApproach
+      - CommonDeviations
+      - CodingGuidance
+      - Paperwork
+      - RemedialActions
+      - GuidanceNoteReferences
+  - InstallationProcess:
+      description: Standardized approach to electrical installations.
+      subsections:
+      - PreInstallDiscussion
+      - PaperworkAndSystemChecks
+      - MaterialOrdering
+      - EarthingSystem
+      - CableRouting
+      - FirstFix
+      - SecondFix
+      - Testing
+      - Paperwork
+      - Analysis
+  title: Electrical Assistant Grounding File
