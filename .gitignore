@@ -1,44 +1,88 @@
-# --- OS / Office temp ---
-Thumbs.db
-desktop.ini
-~$*
-
-# --- IDE cache ---
-.vscode/
-*.user
-
-# --- Build & exports ---
-/_exports/
-/_artifacts/
-/bin/
-/obj/
+# -----------------------
+# Power Platform / PAC / Repo structure
+# -----------------------
+# Transient exports, local zips and scratch
+temp/
+*.zip
+*.bak
+*.tmp
 *.log
-# --- Node/Yarn ---
+
+# If you export solutions to temp first, ensure temp/ is ignored (above).
+# Unpacked solution is tracked under solutions/DesignAndCosting (keep it committed)
+
+# -----------------------
+# VS Code
+# -----------------------
+# Keep .vscode settings and tasks committed, ignore personal artifacts
+.vscode/*.tsbuildinfo
+.vscode/.history/
+.history/
+# Optional: ignore personal workspace files (uncomment if you don't want to track them)
+# *.code-workspace
+
+# -----------------------
+# OS cruft
+# -----------------------
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# -----------------------
+# Node (future-proof if you later script with Node)
+# -----------------------
 node_modules/
-package-lock.json
-yarn.lock
+npm-debug.log*
+yarn-error.log*
 
-# --- Power Platform canvas binaries (keep source instead) ---
-*.msapp
+# -----------------------
+# .NET (if you later add plugins/tools)
+# -----------------------
+bin/
+obj/
+*.user
+*.suo
+*.csproj.user
 
-# --- Secrets & env files (DO NOT COMMIT) ---
-.env
-.env.*
-*.secret
-*.secrets
+# -----------------------
+# Python (if you prototype)
+# -----------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+
+# -----------------------
+# Secrets / keys (never commit)
+# -----------------------
 *.pfx
 *.snk
 *.key
+*.pem
+*.cer
+*.pub
+*.secrets
+*.secret
+*.env
+.env.*
 secrets.json
-appsettings.Development.json
-PrivateSettings.json
 
-# --- Misc shortcuts ---
-*.lnk
-*.url
+# -----------------------
+# Office temporary locks (but keep your actual docs tracked)
+# -----------------------
+~$*.*
 
-# --- Archives & large binary bundles ---
-*.zip
-*.7z
-*.tar
-*.gz
+# -----------------------
+# Git
+# -----------------------
+# Prevent accidental inclusion of these if generated locally
+*.orig
+*.rej
