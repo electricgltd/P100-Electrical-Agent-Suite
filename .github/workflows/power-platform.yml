@@ -1,40 +1,35 @@
-name: Power Platform ALM
-
 on:
-  pull_request:
-    branches: [ main ]
   push:
-    branches: [ main ]
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
-  pack:
-    runs-on: windows-latest
+  pack-solution:
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Install Power Platform CLI
-        run: winget install Microsoft.PowerPlatformCLI --silent
-      - name: Pack solution (unmanaged)
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check for solution sources
+        id: check_sources
         run: |
-          pac auth create --tenant ${{ secrets.PP_TENANT_ID }} --applicationId ${{ secrets.PP_APP_ID }} --clientSecret ${{ secrets.PP_CLIENT_SECRET }} --url ${{ secrets.PP_DEV_URL }}
-          pac solution pack --zipfile _artifacts/P100_ElectricalAgentSuite_Unmanaged.zip --folder solutions/P100_ElectricalAgentSuite --managed false
-      - name: Upload artifact
+          if [ -z "$(find solutions -name Solution.xml)" ]; then
+            echo "found=false" >> $GITHUB_OUTPUT
+          else
+            echo "found=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Pack solution (DesignAndCosting)
+        if: steps.check_sources.outputs.found == 'true'
+        uses: microsoft/powerplatform-actions/pack-solution@v1
+        with:
+          solution-folder: solutions/DesignAndCosting
+          solution-file: out/DesignAndCosting.zip
+
+      - name: Upload packed solution
+        if: steps.check_sources.outputs.found == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: solution-unmanaged
-          path: _artifacts/P100_ElectricalAgentSuite_Unmanaged.zip
-
-  import_to_test:
-    needs: pack
-    if: github.ref == 'refs/heads/main'
-    runs-on: windows-latest
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: solution-unmanaged
-          path: _artifacts
-      - name: Install Power Platform CLI
-        run: winget install Microsoft.PowerPlatformCLI --silent
-      - name: Import to TEST
-        run: |
-          pac auth create --tenant ${{ secrets.PP_TENANT_ID }} --applicationId ${{ secrets.PP_APP_ID }} --clientSecret ${{ secrets.PP_CLIENT_SECRET }} --url ${{ secrets.PP_TEST_URL }}
-          pac solution import --path _artifacts/P100_ElectricalAgentSuite_Unmanaged.zip --publish-changes true --force-overwrite true
+          name: DesignAndCosting.zip
+          path: out/DesignAndCosting.zip

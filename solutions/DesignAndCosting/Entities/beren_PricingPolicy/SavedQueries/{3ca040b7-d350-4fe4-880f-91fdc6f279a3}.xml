@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<savedqueries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <savedquery>
+    <IsCustomizable>1</IsCustomizable>
+    <CanBeDeleted>0</CanBeDeleted>
+    <isquickfindquery>0</isquickfindquery>
+    <isprivate>0</isprivate>
+    <isdefault>1</isdefault>
+    <savedqueryid>{3ca040b7-d350-4fe4-880f-91fdc6f279a3}</savedqueryid>
+    <layoutxml>
+      <grid name="resultset" jump="beren_pricingpolicyname" select="1" icon="1" preview="1">
+        <row name="result" id="beren_pricingpolicyid">
+          <cell name="beren_pricingpolicyname" width="300" />
+          <cell name="beren_policycode" width="150" />
+          <cell name="beren_description" width="150" />
+          <cell name="beren_multiplier" width="150" />
+          <cell name="beren_active" width="150" />
+        </row>
+      </grid>
+    </layoutxml>
+    <querytype>0</querytype>
+    <fetchxml>
+      <fetch version="1.0" mapping="logical">
+        <entity name="beren_pricingpolicy">
+          <attribute name="beren_pricingpolicyid" />
+          <attribute name="beren_pricingpolicyname" />
+          <attribute name="createdon" />
+          <order attribute="beren_pricingpolicyname" descending="false" />
+          <filter type="and">
+            <condition attribute="statecode" operator="eq" value="0" />
+          </filter>
+          <attribute name="beren_policycode" />
+          <attribute name="beren_description" />
+          <attribute name="beren_multiplier" />
+          <attribute name="beren_active" />
+        </entity>
+      </fetch>
+    </fetchxml>
+    <IntroducedVersion>1.0</IntroducedVersion>
+    <LocalizedNames>
+      <LocalizedName description="Active Pricing Policies" languagecode="1033" />
+    </LocalizedNames>
+  </savedquery>
+</savedqueries>

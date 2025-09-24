@@ -1,0 +1,22 @@
+{
+  "folders": [
+    { "path": "." }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/temp": true
+    },
+    "terminal.integrated.defaultProfile.windows": "PowerShell",
+    "powershell.codeFormatting.preset": "OTBS"
+  },
+  "extensions": {
+    "recommendations": [
+      "ms-vscode.powershell",
+      "microsoft-IsvExpTools.powerplatform-vscode",
+      "eamodio.gitlens",
+      "yzhang.markdown-all-in-one",
+      "bierner.markdown-mermaid",
+      "redhat.vscode-yaml"
+    ]
+  }
+}

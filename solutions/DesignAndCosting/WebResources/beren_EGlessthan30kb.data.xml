@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WebResource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <WebResourceId>{0b6a3b83-058f-f011-b4cb-6045bd111b21}</WebResourceId>
+  <Name>beren_EGlessthan30kb</Name>
+  <DisplayName>EG less than 30kb</DisplayName>
+  <WebResourceType>5</WebResourceType>
+  <IntroducedVersion>1.0.0.0</IntroducedVersion>
+  <IsEnabledForMobileClient>0</IsEnabledForMobileClient>
+  <IsAvailableForMobileOffline>0</IsAvailableForMobileOffline>
+  <IsCustomizable>1</IsCustomizable>
+  <CanBeDeleted>1</CanBeDeleted>
+  <IsHidden>0</IsHidden>
+  <FileName>/WebResources/beren_EGlessthan30kb0B6A3B83-058F-F011-B4CB-6045BD111B21</FileName>
+</WebResource>

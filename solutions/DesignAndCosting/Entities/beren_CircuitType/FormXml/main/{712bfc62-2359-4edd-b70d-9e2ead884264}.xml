@@ -1,0 +1,188 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<forms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <systemform>
+    <formid>{712bfc62-2359-4edd-b70d-9e2ead884264}</formid>
+    <IntroducedVersion>1.0</IntroducedVersion>
+    <FormPresentation>1</FormPresentation>
+    <FormActivationState>1</FormActivationState>
+    <form>
+      <tabs>
+        <tab verticallayout="true" id="{9170824d-3aa5-4028-ae52-06ede2aca8a8}" IsUserDefined="1">
+          <labels>
+            <label description="General" languagecode="1033" />
+          </labels>
+          <columns>
+            <column width="100%">
+              <sections>
+                <section showlabel="false" showbar="false" IsUserDefined="0" id="{63db1eb5-9d44-4a4d-a045-9e8487e2ed4f}">
+                  <labels>
+                    <label description="General" languagecode="1033" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="{005a5802-b966-40d7-a03a-04c7e5b3d765}">
+                        <labels>
+                          <label description="Material Task Units" languagecode="1033" />
+                        </labels>
+                        <control id="beren_name" classid="{4273EDBD-AC1D-40d3-9FB2-095C621B552D}" datafieldname="beren_name" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{f0b50a38-3c0e-4ae4-82ee-6b5f740fb9ec}">
+                        <labels>
+                          <label description="Owner" languagecode="1033" />
+                        </labels>
+                        <control id="ownerid" classid="{270BD3DB-D9AF-4782-9025-509E298DEC0A}" datafieldname="ownerid" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{15bc61fd-5734-48ee-8799-731cf1c20a5a}" locklevel="0" rowspan="1" colspan="1">
+                        <labels>
+                          <label description="Task Unit" languagecode="1033" />
+                        </labels>
+                        <control id="beren_taskunit" classid="{270BD3DB-D9AF-4782-9025-509E298DEC0A}" datafieldname="beren_taskunit" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{303309b2-45bb-4677-b3b4-39132d1171fe}" locklevel="0" rowspan="1" colspan="1">
+                        <labels>
+                          <label description="Material" languagecode="1033" />
+                        </labels>
+                        <control id="beren_material" classid="{270BD3DB-D9AF-4782-9025-509E298DEC0A}" datafieldname="beren_material" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{2c15f64b-c212-4002-a356-8b507958f242}" locklevel="0" rowspan="1" colspan="1">
+                        <labels>
+                          <label description="Created By" languagecode="1033" />
+                        </labels>
+                        <control id="createdby" classid="{270BD3DB-D9AF-4782-9025-509E298DEC0A}" datafieldname="createdby" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{5cc4357c-ec8e-425d-87a7-69c33ba0723a}" locklevel="0" rowspan="1" colspan="1">
+                        <labels>
+                          <label description="Quantity Rule Type" languagecode="1033" />
+                        </labels>
+                        <control id="beren_quantityruletype" classid="{3EF39988-22BB-4F0B-BBBE-64B5A3748AEE}" datafieldname="beren_quantityruletype" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{bdb3e07c-3288-4a09-ae81-635d8053535a}" locklevel="0" rowspan="1" colspan="1">
+                        <labels>
+                          <label description="Quantity Base" languagecode="1033" />
+                        </labels>
+                        <control id="beren_quantitybase" classid="{C3EFE0C3-0EC6-42BE-8349-CBD9079DFD8E}" datafieldname="beren_quantitybase" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{5be80a21-d5d2-4d73-a15e-ca9362329787}" locklevel="0" rowspan="1" colspan="1">
+                        <labels>
+                          <label description="Quantity Formula" languagecode="1033" />
+                        </labels>
+                        <control id="beren_quantityformula" classid="{4273EDBD-AC1D-40D3-9FB2-095C621B552D}" datafieldname="beren_quantityformula" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{e4332284-6d34-497d-b269-7a1f18c6f0b4}" locklevel="0" rowspan="1" colspan="1">
+                        <labels>
+                          <label description="Allow Packing Rounding" languagecode="1033" />
+                        </labels>
+                        <control id="beren_allowpackingrounding" classid="{67FAC785-CD58-4F9F-ABB3-4B7DDC6ED5ED}" datafieldname="beren_allowpackingrounding" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{3a45895e-5c09-4e70-8ef4-d3f139a4b7b1}" locklevel="0" rowspan="1" colspan="1">
+                        <labels>
+                          <label description="Variant Condition Type Lighting position" languagecode="1033" />
+                        </labels>
+                        <control id="beren_variantconditiontype" classid="{3EF39988-22BB-4F0B-BBBE-64B5A3748AEE}" datafieldname="beren_variantconditiontype" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{c4a0f805-5353-489a-afb9-67f93aadc30d}" locklevel="0" rowspan="1" colspan="1">
+                        <labels>
+                          <label description="Variant Condition Gang Number" languagecode="1033" />
+                        </labels>
+                        <control id="beren_variantconditiontypenumber" classid="{3EF39988-22BB-4F0B-BBBE-64B5A3748AEE}" datafieldname="beren_variantconditiontypenumber" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{52d1d1ba-185c-4e1c-8999-71a6b945eb76}" locklevel="0" rowspan="1" colspan="1">
+                        <labels>
+                          <label description="Time Multiplier Gangs" languagecode="1033" />
+                        </labels>
+                        <control id="beren_timemultipliervariant" classid="{C3EFE0C3-0EC6-42BE-8349-CBD9079DFD8E}" datafieldname="beren_timemultipliervariant" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{43043240-ecad-45b5-a6c9-51c8f0cdaf7d}" locklevel="0" rowspan="1" colspan="1">
+                        <labels>
+                          <label description="Notes" languagecode="1033" />
+                        </labels>
+                        <control id="beren_notes" classid="{E0DECE4B-6FC8-4A8F-A065-082708572369}" datafieldname="beren_notes" disabled="false" />
+                      </cell>
+                    </row>
+                  </rows>
+                </section>
+              </sections>
+            </column>
+          </columns>
+        </tab>
+      </tabs>
+      <header id="{672a166c-5f8c-4bf2-b859-fd60a3cefee8}" celllabelposition="Top" columns="111" labelwidth="115" celllabelalignment="Left">
+        <rows>
+          <row>
+            <cell id="{bcc5bf42-c178-4184-88f9-f555b1ee6656}" showlabel="false">
+              <labels>
+                <label description="" languagecode="1033" />
+              </labels>
+            </cell>
+            <cell id="{f1114e5b-f1b8-49a6-8cb0-bf765bd2c787}" showlabel="false">
+              <labels>
+                <label description="" languagecode="1033" />
+              </labels>
+            </cell>
+            <cell id="{198c1abc-37c8-4b60-b487-a1d2575f5fc8}" showlabel="false">
+              <labels>
+                <label description="" languagecode="1033" />
+              </labels>
+            </cell>
+          </row>
+        </rows>
+      </header>
+      <footer id="{888c9dee-f1ec-40aa-82da-95d0a25e4dd7}" celllabelposition="Top" columns="111" labelwidth="115" celllabelalignment="Left">
+        <rows>
+          <row>
+            <cell id="{e3ec9375-4b29-4739-bf5e-06abad2031ae}" showlabel="false">
+              <labels>
+                <label description="" languagecode="1033" />
+              </labels>
+            </cell>
+            <cell id="{16d70d35-d268-47ed-89d6-f69e6b8279b7}" showlabel="false">
+              <labels>
+                <label description="" languagecode="1033" />
+              </labels>
+            </cell>
+            <cell id="{3892ed01-7daa-4045-add1-7571a1decb74}" showlabel="false">
+              <labels>
+                <label description="" languagecode="1033" />
+              </labels>
+            </cell>
+          </row>
+        </rows>
+      </footer>
+      <DisplayConditions Order="0" FallbackForm="true">
+        <Everyone />
+      </DisplayConditions>
+    </form>
+    <IsCustomizable>1</IsCustomizable>
+    <CanBeDeleted>1</CanBeDeleted>
+    <LocalizedNames>
+      <LocalizedName description="Information" languagecode="1033" />
+    </LocalizedNames>
+    <Descriptions>
+      <Description description="A form for this entity." languagecode="1033" />
+    </Descriptions>
+  </systemform>
+</forms>

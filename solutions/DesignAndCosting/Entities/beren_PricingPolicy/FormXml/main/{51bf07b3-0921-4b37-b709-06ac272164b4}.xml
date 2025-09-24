@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<forms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <systemform>
+    <formid>{51bf07b3-0921-4b37-b709-06ac272164b4}</formid>
+    <IntroducedVersion>1.0</IntroducedVersion>
+    <FormPresentation>1</FormPresentation>
+    <FormActivationState>1</FormActivationState>
+    <form>
+      <tabs>
+        <tab verticallayout="true" id="{7559fafa-dc41-426e-90fa-b71c6e9bc1ef}" IsUserDefined="1">
+          <labels>
+            <label description="General" languagecode="1033" />
+          </labels>
+          <columns>
+            <column width="100%">
+              <sections>
+                <section showlabel="false" showbar="false" IsUserDefined="0" id="{b059a81b-02ca-4e5d-8b80-74c48add97c1}">
+                  <labels>
+                    <label description="General" languagecode="1033" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="{476440d8-57e7-46ab-af12-b45ea86963f8}">
+                        <labels>
+                          <label description="Pricing Policy Name" languagecode="1033" />
+                        </labels>
+                        <control id="beren_pricingpolicyname" classid="{4273EDBD-AC1D-40d3-9FB2-095C621B552D}" datafieldname="beren_pricingpolicyname" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{83ca7dbc-83ed-4682-93c9-6a21ba08349a}">
+                        <labels>
+                          <label description="Owner" languagecode="1033" />
+                        </labels>
+                        <control id="ownerid" classid="{270BD3DB-D9AF-4782-9025-509E298DEC0A}" datafieldname="ownerid" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{2585243c-29f4-42d9-a47d-dfaaa9afdb1f}">
+                        <labels>
+                          <label description="Policy Code" languagecode="1033" />
+                        </labels>
+                        <control id="beren_policycode" classid="{4273edbd-ac1d-40d3-9fb2-095c621b552d}" datafieldname="beren_policycode" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{bc635128-2b65-4fd3-b5b1-c9918d970158}">
+                        <labels>
+                          <label description="Description" languagecode="1033" />
+                        </labels>
+                        <control id="beren_description" classid="{e0dece4b-6fc8-4a8f-a065-082708572369}" datafieldname="beren_description" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{ccc85529-7e92-4298-9c6c-b0371db16baf}">
+                        <labels>
+                          <label description="Multiplier" languagecode="1033" />
+                        </labels>
+                        <control id="beren_multiplier" classid="{c3efe0c3-0ec6-42be-8349-cbd9079dfd8e}" datafieldname="beren_multiplier" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{035820f5-e4f5-4612-ae63-81e382cc4c37}">
+                        <labels>
+                          <label description="Active" languagecode="1033" />
+                        </labels>
+                        <control id="beren_active" classid="{67fac785-cd58-4f9f-abb3-4b7ddc6ed5ed}" datafieldname="beren_active" />
+                      </cell>
+                    </row>
+                  </rows>
+                </section>
+              </sections>
+            </column>
+          </columns>
+        </tab>
+      </tabs>
+    </form>
+    <IsCustomizable>1</IsCustomizable>
+    <CanBeDeleted>1</CanBeDeleted>
+    <LocalizedNames>
+      <LocalizedName description="Information" languagecode="1033" />
+    </LocalizedNames>
+    <Descriptions>
+      <Description description="A form for this entity." languagecode="1033" />
+    </Descriptions>
+  </systemform>
+</forms>

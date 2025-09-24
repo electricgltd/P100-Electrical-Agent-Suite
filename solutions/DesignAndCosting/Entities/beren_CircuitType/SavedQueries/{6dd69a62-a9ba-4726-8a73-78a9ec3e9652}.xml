@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<savedqueries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <savedquery>
+    <IsCustomizable>1</IsCustomizable>
+    <CanBeDeleted>0</CanBeDeleted>
+    <isquickfindquery>0</isquickfindquery>
+    <isprivate>0</isprivate>
+    <isdefault>1</isdefault>
+    <savedqueryid>{6dd69a62-a9ba-4726-8a73-78a9ec3e9652}</savedqueryid>
+    <layoutxml>
+      <grid name="resultset" jump="beren_name" select="1" icon="1" preview="1">
+        <row name="result" id="beren_circuittypeid">
+          <cell name="beren_name" width="210" />
+          <cell name="beren_taskunit" width="100" />
+          <cell name="beren_material" width="100" />
+          <cell name="beren_quantityruletype" width="157" />
+          <cell name="beren_quantitybase" width="126" />
+          <cell name="beren_quantityformula" width="148" />
+          <cell name="beren_wasteoverride" width="159" />
+          <cell name="beren_allowpackingrounding" width="190" />
+          <cell name="beren_variantconditiontype" width="181" />
+          <cell name="beren_variantconditiontypenumber" width="235" />
+          <cell name="beren_timemultipliervariant" width="180" />
+          <cell name="beren_notes" width="100" />
+        </row>
+      </grid>
+    </layoutxml>
+    <querytype>0</querytype>
+    <fetchxml>
+      <fetch version="1.0" mapping="logical" distinct="true">
+        <entity name="beren_circuittype">
+          <attribute name="beren_circuittypeid" />
+          <attribute name="beren_name" />
+          <order attribute="beren_name" descending="false" />
+          <attribute name="beren_taskunit" />
+          <attribute name="beren_material" />
+          <attribute name="beren_quantityruletype" />
+          <attribute name="beren_quantitybase" />
+          <attribute name="beren_quantityformula" />
+          <attribute name="beren_allowpackingrounding" />
+          <attribute name="beren_variantconditiontype" />
+          <attribute name="beren_variantconditiontypenumber" />
+          <attribute name="beren_timemultipliervariant" />
+          <attribute name="beren_notes" />
+          <attribute name="beren_wasteoverride" />
+          <filter type="and">
+            <condition attribute="statecode" operator="eq" value="0" />
+          </filter>
+        </entity>
+      </fetch>
+    </fetchxml>
+    <IntroducedVersion>1.0</IntroducedVersion>
+    <LocalizedNames>
+      <LocalizedName description="Active Circuit Types Excel Data Entry" languagecode="1033" />
+    </LocalizedNames>
+  </savedquery>
+</savedqueries>

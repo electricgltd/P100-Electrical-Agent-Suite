@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<savedqueries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <savedquery>
+    <IsCustomizable>1</IsCustomizable>
+    <CanBeDeleted>0</CanBeDeleted>
+    <isquickfindquery>1</isquickfindquery>
+    <isprivate>0</isprivate>
+    <isdefault>1</isdefault>
+    <savedqueryid>{2feb222f-1434-43d1-bcfc-14632f9c7391}</savedqueryid>
+    <layoutxml>
+      <grid name="resultset" jump="beren_taskname" select="1" icon="1" preview="1">
+        <row name="result" id="beren_taskunitsid">
+          <cell name="beren_taskname" width="300" />
+          <cell name="createdon" width="125" />
+        </row>
+      </grid>
+    </layoutxml>
+    <querytype>4</querytype>
+    <fetchxml>
+      <fetch version="1.0" mapping="logical">
+        <entity name="beren_taskunits">
+          <attribute name="beren_taskunitsid" />
+          <attribute name="beren_taskname" />
+          <attribute name="createdon" />
+          <order attribute="beren_taskname" descending="false" />
+          <filter type="and">
+            <condition attribute="statecode" operator="eq" value="0" />
+          </filter>
+          <filter type="or" isquickfindfields="1">
+            <condition attribute="beren_taskname" operator="like" value="{0}" />
+          </filter>
+        </entity>
+      </fetch>
+    </fetchxml>
+    <IntroducedVersion>1.0</IntroducedVersion>
+    <LocalizedNames>
+      <LocalizedName description="Quick Find Active Task Units" languagecode="1033" />
+    </LocalizedNames>
+  </savedquery>
+</savedqueries>

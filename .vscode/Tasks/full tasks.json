@@ -1,0 +1,38 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Export & Unpack (Dev)",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy", "Bypass",
+        "-File", ".\\scripts\\Export-Unpack-P100.ps1"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "Commit & Push",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile",
+        "-Command",
+        "$msg = Read-Host 'Commit message'; " ,
+        "git add solutions/DesignAndCosting; ",
+        "git add docs; ",
+        "git commit -m \"$msg\"; ",
+        "git push origin main"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "Daily Snapshot",
+      "dependsOn": [
+        "Export & Unpack (Dev)",
+        "Commit & Push"
+      ]
+    }
+  ]
+}

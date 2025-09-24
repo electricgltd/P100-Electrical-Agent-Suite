@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<savedqueries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <savedquery>
+    <IsCustomizable>1</IsCustomizable>
+    <CanBeDeleted>0</CanBeDeleted>
+    <isquickfindquery>0</isquickfindquery>
+    <isprivate>0</isprivate>
+    <isdefault>1</isdefault>
+    <savedqueryid>{286fb70b-30da-41a7-ace4-f1319d84d7eb}</savedqueryid>
+    <layoutxml>
+      <grid name="beren_assemblytemplates" jump="beren_assemblyname" select="1" icon="1" preview="1">
+        <row name="beren_assemblytemplate" id="beren_assemblytemplateid">
+          <cell name="beren_assemblyname" width="300" />
+          <cell name="createdon" width="125" />
+        </row>
+      </grid>
+    </layoutxml>
+    <querytype>2</querytype>
+    <fetchxml>
+      <fetch version="1.0" mapping="logical">
+        <entity name="beren_assemblytemplate">
+          <attribute name="beren_assemblytemplateid" />
+          <attribute name="beren_assemblyname" />
+          <attribute name="createdon" />
+          <order attribute="beren_assemblyname" descending="false" />
+          <filter type="and">
+            <condition attribute="statecode" operator="eq" value="0" />
+          </filter>
+        </entity>
+      </fetch>
+    </fetchxml>
+    <IntroducedVersion>1.0</IntroducedVersion>
+    <LocalizedNames>
+      <LocalizedName description="Assembly Template Associated View" languagecode="1033" />
+    </LocalizedNames>
+  </savedquery>
+</savedqueries>

@@ -1,0 +1,56 @@
+name: Export Dataverse Solution (Nightly)
+
+on:
+  schedule:
+    - cron: "0 2 * * *" # Runs daily at 02:00 UTC
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  export-solution:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ✅ Checkout repo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ✅ Export solution from Dataverse
+      - name: Export solution (DesignAndCosting)
+        uses: microsoft/powerplatform-actions/export-solution@v1
+        with:
+          environment-url: ${{ secrets.PP_DEV_URL }}
+          app-id: ${{ secrets.PP_APP_ID }}
+          client-secret: ${{ secrets.PP_CLIENT_SECRET }}
+          tenant-id: ${{ secrets.PP_TENANT_ID }}
+          solution-name: DesignAndCosting
+          solution-output-file: out/DesignAndCosting.zip
+          managed: false
+
+      # ✅ Unpack solution into solutions/DesignAndCosting
+      - name: Unpack solution
+        uses: microsoft/powerplatform-actions/unpack-solution@v1
+        with:
+          solution-file: out/DesignAndCosting.zip
+          solution-folder: solutions/DesignAndCosting
+          overwrite-files: true
+
+      # ✅ Commit and push changes if any
+      - name: Commit changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add solutions/DesignAndCosting
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore(sync): nightly export of DesignAndCosting solution"
+          fi
+
+      # ✅ Create Pull Request
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: auto/export-designandcosting
+          title: "Nightly Export: DesignAndCosting Solution"
+          body: "Automated export from Dataverse Dev environment."
+          commit-message: "chore(sync): nightly export of DesignAndCosting solution"
