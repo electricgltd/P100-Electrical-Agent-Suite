@@ -1,16 +1,24 @@
+name: Power Platform CI
+
 on:
   push:
-    branches:
-      - main
-  workflow_dispatch:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   pack-solution:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # ✅ Install PAC (Power Platform CLI) for GitHub Actions
+      - name: Install Power Platform Tools
+        uses: microsoft/powerplatform-actions/actions-install@v1
+
+      # Guard: skip if no unpacked sources yet
       - name: Check for solution sources
         id: check_sources
         run: |
@@ -20,6 +28,12 @@ jobs:
             echo "found=true" >> $GITHUB_OUTPUT
           fi
 
+      # Ensure output folder exists
+      - name: Prepare output folder
+        if: steps.check_sources.outputs.found == 'true'
+        run: mkdir -p out
+
+      # Pack is local-only (no auth/URL needed)
       - name: Pack solution (DesignAndCosting)
         if: steps.check_sources.outputs.found == 'true'
         uses: microsoft/powerplatform-actions/pack-solution@v1
@@ -27,9 +41,10 @@ jobs:
           solution-folder: solutions/DesignAndCosting
           solution-file: out/DesignAndCosting.zip
 
-      - name: Upload packed solution
+      - name: Upload packed solution artifact
         if: steps.check_sources.outputs.found == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: DesignAndCosting.zip
           path: out/DesignAndCosting.zip
+

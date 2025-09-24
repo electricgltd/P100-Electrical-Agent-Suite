@@ -1,21 +1,50 @@
-name: Export Dataverse Solution (Nightly)
+name: Export Dataverse Solution (Nightly, DEV)
 
 on:
   schedule:
-    - cron: "0 2 * * *" # Runs daily at 02:00 UTC
-  workflow_dispatch: # Allow manual trigger
+    - cron: "0 2 * * *" # 02:00 UTC daily
+  workflow_dispatch: {} # Allow manual runs
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: export-dev-designandcosting
+  cancel-in-progress: false
 
 jobs:
   export-solution:
     runs-on: ubuntu-latest
+    env:
+      DEV_URL: ${{ secrets.PP_DEV_URL }}
+      TEST_URL: ${{ secrets.PP_TEST_URL }}
 
     steps:
-      # ✅ Checkout repo
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ✅ Export solution from Dataverse
-      - name: Export solution (DesignAndCosting)
+      # ✅ Install PAC (Power Platform CLI) for GitHub Actions
+      - name: Install Power Platform Tools
+        uses: microsoft/powerplatform-actions/actions-install@v1
+
+      # Safety: confirm we're using DEV, not TEST
+      - name: Sanity check (Dev vs Test)
+        run: |
+          echo "Target environment (DEV): $DEV_URL"
+          if [ -z "$DEV_URL" ]; then
+            echo "PP_DEV_URL is empty. Failing."; exit 1
+          fi
+          if [ -n "$TEST_URL" ] && [ "$DEV_URL" = "$TEST_URL" ]; then
+            echo "PP_DEV_URL and PP_TEST_URL are identical. Failing to avoid cross-env confusion."; exit 1
+          fi
+
+      # Ensure output folder exists
+      - name: Prepare output folder
+        run: mkdir -p out
+
+      # ✅ Export from DEV (read-only)
+      - name: Export solution (DesignAndCosting) from DEV
         uses: microsoft/powerplatform-actions/export-solution@v1
         with:
           environment-url: ${{ secrets.PP_DEV_URL }}
@@ -26,31 +55,26 @@ jobs:
           solution-output-file: out/DesignAndCosting.zip
           managed: false
 
-      # ✅ Unpack solution into solutions/DesignAndCosting
-      - name: Unpack solution
+      # Unpack into repo tree
+      - name: Unpack solution to solutions/DesignAndCosting
         uses: microsoft/powerplatform-actions/unpack-solution@v1
         with:
           solution-file: out/DesignAndCosting.zip
           solution-folder: solutions/DesignAndCosting
           overwrite-files: true
 
-      # ✅ Commit and push changes if any
-      - name: Commit changes
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add solutions/DesignAndCosting
-          if git diff --cached --quiet; then
-            echo "No changes to commit"
-          else
-            git commit -m "chore(sync): nightly export of DesignAndCosting solution"
-          fi
-
-      # ✅ Create Pull Request
+      # Create PR with any uncommitted changes
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
-          branch: auto/export-designandcosting
-          title: "Nightly Export: DesignAndCosting Solution"
-          body: "Automated export from Dataverse Dev environment."
-          commit-message: "chore(sync): nightly export of DesignAndCosting solution"
+          branch: auto/export-designandcosting-dev
+          title: "[DEV] Nightly Export: DesignAndCosting"
+          body: |
+            Automated export from **DEV** (${{ secrets.PP_DEV_URL }}).
+            This PR contains any changes detected after exporting and unpacking the solution.
+          commit-message: "chore(sync): nightly export (DEV) - DesignAndCosting"
+          add-paths: |
+            solutions/DesignAndCosting/**
+            out/DesignAndCosting.zip
+          delete-branch: true
+
