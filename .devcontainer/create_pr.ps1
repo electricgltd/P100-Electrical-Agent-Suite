@@ -5,12 +5,10 @@ param(
     [switch]$Draft
 )
 
-function Show-Usage {
-    @"
-Usage: .\create_pr.ps1 [-Branch <name>] [-Message <commit message>] [-Title <PR title>] [-Draft]
+function Show-Usage { 
+@"Usage: .\create_pr.ps1 [-Branch <name>] [-Message <commit message>] [-Title <PR title>] [-Draft]
 
-Helper to create a branch, commit changes (if any), push, and open a draft PR using gh.
-"@
+Helper to create a branch, commit changes (if any), push, and open a draft PR using gh."@
 }
 
 if (-not (Get-Command gh -ErrorAction SilentlyContinue)) {
@@ -26,7 +24,8 @@ if (-not $Title -or $Title -eq "") {
     $Title = $Message
 }
 
-if ((git status --porcelain) -ne "") {
+$changes = git status --porcelain
+if ($changes -ne "") {
     Write-Host "There are local changes. These will be committed with message: $Message"
     git add -A
     git commit -m $Message
