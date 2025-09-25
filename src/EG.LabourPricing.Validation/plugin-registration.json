@@ -1,0 +1,44 @@
+{
+  "assembly": {
+    "name": "EG.LabourPricing.Validation",
+    "version": "1.0.0.0",
+    "description": "Labour Rate overlap validation plugin for P100 Electrical Agent Suite",
+    "isolationMode": "sandbox",
+    "location": "database"
+  },
+  "plugins": [
+    {
+      "name": "LabourRateOverlapPlugin",
+      "friendlyName": "Labour Rate Overlap Validation",
+      "description": "Validates that Labour Rate effective date ranges do not overlap for the same (PolicyId, RoleId) combination",
+      "steps": [
+        {
+          "name": "Validate Labour Rate Overlap on Create",
+          "message": "Create",
+          "primaryEntity": "beren_labourrateseffective",
+          "stage": "PostOperation",
+          "mode": "Synchronous",
+          "filteringAttributes": [
+            "beren_pricingpolicy",
+            "beren_labourrole", 
+            "beren_validfrom",
+            "beren_validto"
+          ]
+        },
+        {
+          "name": "Validate Labour Rate Overlap on Update",
+          "message": "Update", 
+          "primaryEntity": "beren_labourrateseffective",
+          "stage": "PostOperation",
+          "mode": "Synchronous",
+          "filteringAttributes": [
+            "beren_pricingpolicy",
+            "beren_labourrole",
+            "beren_validfrom", 
+            "beren_validto"
+          ]
+        }
+      ]
+    }
+  ]
+}

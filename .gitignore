@@ -84,13 +84,15 @@ npm-debug.log*
 yarn-error.log*
 
 # -----------------------
-# .NET (if you later add plugins/tools)
+# .NET (plugins/tools)
 # -----------------------
 bin/
 obj/
 *.user
 *.suo
 *.csproj.user
+*.dll
+*.pdb
 
 # -----------------------
 # Python (if you prototype)
