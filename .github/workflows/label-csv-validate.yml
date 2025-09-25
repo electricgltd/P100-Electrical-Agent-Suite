@@ -1,0 +1,70 @@
+name: Validate label CSV order
+
+on:
+  push:
+    paths:
+      - 'docs/GitHub/Colour_Labels_GitHub.csv'
+  pull_request:
+    paths:
+      - 'docs/GitHub/Colour_Labels_GitHub.csv'
+  workflow_dispatch: {}
+
+jobs:
+  validate:
+    name: Validate Colour_Labels_GitHub.csv ordering
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate CSV for unpadded numeric prefixes
+        shell: pwsh
+        run: |
+          $csvPath = 'docs/GitHub/Colour_Labels_GitHub.csv'
+          if (-not (Test-Path $csvPath)) {
+            Write-Output "CSV not found: $csvPath"
+            exit 0
+          }
+
+          $lines = Get-Content $csvPath -Raw -ErrorAction Stop -Encoding UTF8 -ReadCount 0 -Delimiter "`n" -EA Stop
+          $lines = $lines -split "`n"
+          if ($lines.Count -le 1) { Write-Output "CSV empty or only header"; exit 0 }
+
+          # compute max numeric width
+          $maxNum = 0
+          $parsed = @()
+          for ($i = 1; $i -lt $lines.Count; $i++) {
+            $line = $lines[$i].TrimEnd("`r")
+            if ([string]::IsNullOrWhiteSpace($line)) { continue }
+            # naive CSV split: first column is Name
+            $cols = $line -split ','
+            $name = $cols[0].Trim('"')
+            if ($name -match '^\s*(\d+)\s+(.*)$') {
+              $num = $matches[1]
+              $rest = $matches[2]
+              if ([int]$num -gt $maxNum) { $maxNum = [int]$num }
+              $parsed += [pscustomobject]@{ LineIndex = $i; Name = $name; Number = $num; Rest = $rest }
+            }
+            else {
+              $parsed += [pscustomobject]@{ LineIndex = $i; Name = $name; Number = $null; Rest = $name }
+            }
+          }
+
+          if ($parsed.Count -eq 0) { Write-Output "No rows to check"; exit 0 }
+
+          if ($maxNum -lt 10) { $width = 2 } else { $width = $maxNum.ToString().Length }
+
+          $warnCount = 0
+          foreach ($p in $parsed) {
+            if ($null -ne $p.Number) {
+              if ($p.Number.Length -lt $width) {
+                $suggest = $p.Number.PadLeft($width,'0') + ' ' + $p.Rest
+                $lineNumber = $p.LineIndex + 1 # account for header line being 1
+                # GitHub Actions warning annotation
+                Write-Output "::warning file=$csvPath,line=$lineNumber::Unpadded label '$($p.Name)' — suggested: '$suggest'"
+                $warnCount++
+              }
+            }
+          }
+
+          if ($warnCount -eq 0) { Write-Output "No unpadded numeric prefixes found." } else { Write-Output "Found $warnCount unpadded labels (warnings emitted)." }
