@@ -33,6 +33,31 @@ else
   echo "pac not found after installation attempt. Check the logs above."
 fi
 
+# Install PowerShell (pwsh) if not present - idempotent and best-effort on Debian/Ubuntu-based images
+if command -v pwsh >/dev/null 2>&1; then
+  echo "pwsh already present at $(command -v pwsh)."
+else
+  echo "pwsh not found. Attempting to install PowerShell (idempotent)."
+  # Only attempt apt-based install if apt-get exists
+  if command -v apt-get >/dev/null 2>&1; then
+    echo "Detected apt-get. Installing PowerShell via Microsoft package feed..."
+    set +e
+    TMP_DEB="/tmp/packages-microsoft-prod.deb"
+    wget -q https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O "$TMP_DEB" || true
+    if [ -f "$TMP_DEB" ]; then
+      sudo dpkg -i "$TMP_DEB" || true
+      sudo apt-get update -y || true
+      sudo apt-get install -y powershell || true
+    else
+      echo "Could not download Microsoft package feed deb; skipping pwsh install."
+    fi
+    set -e
+  else
+    echo "No apt-get detected; skipping automatic pwsh install. You can install pwsh manually if needed."
+  fi
+fi
+
+
 echo "Post-create tasks complete. Next steps:"
 echo " - Open a terminal in the Codespace (or container) and run:"
 echo "     git checkout -b my-codespace-branch"
