@@ -1,0 +1,124 @@
+labels:
+- name: 'Agent: DCA'
+  color: E85AAD
+  description: Group Instructions, Logic, Knowledge Sources, Data Sources and Tools
+    together to apply to LLM's
+- name: 'Agent: EA'
+  color: B33DC6
+  description: Group Instructions, Logic, Knowledge Sources, Data Sources and Tools
+    together to apply to LLM's
+- name: 'Agent: PA'
+  color: 6F42C1
+  description: Group Instructions, Logic, Knowledge Sources, Data Sources and Tools
+    together to apply to LLM's
+- name: agent:DCA
+  color: ff7f0e
+  description: Design & Costing Agent (DCA)
+- name: agent:EA
+  color: 1f77b4
+  description: Electrical Agent (EA)
+- name: agent:PA
+  color: 2ca02c
+  description: Planning Agent (PA)
+- name: area:Car Charger
+  color: aec7e8
+  description: Car Charging
+- name: area:Cross Agent Orchestration
+  color: 9467bd
+  description: Cross Agent Orchestration and Structure
+- name: area:Dataverse
+  color: 1f9c9c
+  description: 'Power Platform: Dataverse'
+- name: area:EICR
+  color: d62728
+  description: Electrical Installation Condition Report
+- name: area:Emergency Lighting
+  color: e377c2
+  description: Emergency Lighting Systems
+- name: area:Fault Finding
+  color: 8c564b
+  description: Fault Finding
+- name: area:Grounding File
+  color: 7f7f7f
+  description: Associated with the grounding files
+- name: area:Install
+  color: c49c94
+  description: Installations
+- name: area:Power Automate
+  color: 17becf
+  description: Associated with Power Automate Flows
+- name: area:Testing
+  color: bcbd22
+  description: Testing
+- name: Car Charger
+  color: 00C853
+  description: Areas that Have processes associated with them
+- name: Critical
+  color: D0021B
+  description: Categorise Issues
+- name: EICR
+  color: C62828
+  description: Areas that Have processes associated with them
+- name: Emergency Lighting
+  color: C0CA33
+  description: Areas that Have processes associated with them
+- name: Fault Finding
+  color: FB8C00
+  description: Areas that Have processes associated with them
+- name: Important
+  color: FFB000
+  description: Categorise Issues
+- name: Install
+  color: 0A84FF
+  description: Areas that Have processes associated with them
+- name: Non-Critical
+  color: 00A650
+  description: Categorise Issues
+- name: 'Platform: ALM & Extensibility'
+  color: 4B5563
+  description: Management of the solution
+- name: 'Platform: Apps'
+  color: 8B5CF6
+  description: Data Input for the Dataverse Tables
+- name: 'Platform: Power Automate Flows'
+  color: 00B5D1
+  description: Transport system for Agent Data
+- name: 'Platform: Security and Governance'
+  color: 57606A
+  description: Ensure Data Integrity
+- name: 'Schema: Assembly Template'
+  color: E36209
+  description: Structured Data Source
+- name: 'Schema: Bill of Materials (BOM)'
+  color: B07219
+  description: Structured Data Source
+- name: 'Schema: Circuit Instance'
+  color: 8756FF
+  description: Structured Data Source
+- name: 'Schema: Material Task Units (MTU)'
+  color: 0D9488
+  description: Structured Data Source
+- name: 'Schema: Materials'
+  color: 1F9E89
+  description: Structured Data Source
+- name: 'Schema: Price Policy'
+  color: 2D6E2E
+  description: Structured Data Source
+- name: 'Schema: Project'
+  color: 0B4F6C
+  description: Structured Data Source
+- name: 'Schema: Task Units'
+  color: 2A7F62
+  description: Structured Data Source
+- name: 'Schema: Variant Type Master'
+  color: 10B981
+  description: Structured Data Source
+- name: 'Solution: OneDrive'
+  color: 0078D4
+  description: Container that groups files together on OneDrive
+- name: 'Solution: Power Platform'
+  color: 1F6FEB
+  description: Container that groups components together in Power Platform
+- name: Testing
+  color: 9C27B0
+  description: Areas that Have processes associated with them
