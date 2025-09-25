@@ -29,7 +29,7 @@ htmlcov/
 .env
 
 # Local PR body / temp
-.pr_body.md
+# .pr_body.md  (tracked intentionally; remove this comment if you want to ignore it)
 
 # Archive and temp directories
 _temp/
