@@ -1,0 +1,261 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      },
+      "planId": {
+        "defaultValue": "YOUR_PLANNER_PLAN_ID",
+        "type": "String"
+      }
+    },
+    "triggers": {
+      "When_an_issue_is_edited_or_labeled": {
+        "type": "ApiConnectionWebhook",
+        "inputs": {
+          "host": {
+            "connection": {
+              "name": "@parameters('$connections')['github']['connectionId']"
+            }
+          },
+          "path": "/trigger/repos/@{encodeURIComponent('electricgltd')}/P100-Electrical-Agent-Suite/issues",
+          "queries": {
+            "events": "edited,labeled,milestoned"
+          }
+        },
+        "metadata": {
+          "operationMetadataId": "github-issue-edited"
+        }
+      }
+    },
+    "actions": {
+      "Parse_Updated_Issue": {
+        "type": "ParseJson",
+        "inputs": {
+          "content": "@triggerBody()",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "action": {"type": "string"},
+              "issue": {
+                "type": "object",
+                "properties": {
+                  "number": {"type": "integer"},
+                  "title": {"type": "string"},
+                  "html_url": {"type": "string"},
+                  "labels": {"type": "array"},
+                  "milestone": {"type": "object"}
+                }
+              }
+            }
+          }
+        },
+        "runAfter": {},
+        "metadata": {
+          "operationMetadataId": "parse-updated-issue"
+        }
+      },
+      "Find_Existing_Task": {
+        "type": "ApiConnection",
+        "inputs": {
+          "host": {
+            "connection": {
+              "name": "@parameters('$connections')['planner']['connectionId']"
+            }
+          },
+          "method": "get",
+          "path": "/plans/@{parameters('planId')}/tasks",
+          "queries": {
+            "$filter": "contains(notes, '@{body('Parse_Updated_Issue')?['issue']?['html_url']}')"
+          }
+        },
+        "runAfter": {
+          "Parse_Updated_Issue": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "find-existing-task"
+        }
+      },
+      "Condition_Task_Found": {
+        "type": "If",
+        "expression": {
+          "and": [
+            {
+              "greater": [
+                "@length(body('Find_Existing_Task')?['value'])",
+                0
+              ]
+            }
+          ]
+        },
+        "actions": {
+          "Get_Task_Details": {
+            "type": "ApiConnection",
+            "inputs": {
+              "host": {
+                "connection": {
+                  "name": "@parameters('$connections')['planner']['connectionId']"
+                }
+              },
+              "method": "get",
+              "path": "/tasks/@{first(body('Find_Existing_Task')?['value'])?['id']}"
+            },
+            "runAfter": {},
+            "metadata": {
+              "operationMetadataId": "get-task-details"
+            }
+          },
+          "Map_Updated_Priority": {
+            "type": "Compose",
+            "inputs": "@if(contains(string(body('Parse_Updated_Issue')?['issue']?['labels']), 'Critical'), 1, if(contains(string(body('Parse_Updated_Issue')?['issue']?['labels']), 'Important'), 3, if(contains(string(body('Parse_Updated_Issue')?['issue']?['labels']), 'Non-Critical'), 9, 5)))",
+            "runAfter": {
+              "Get_Task_Details": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "map-updated-priority"
+            }
+          },
+          "Update_Task": {
+            "type": "ApiConnection",
+            "inputs": {
+              "host": {
+                "connection": {
+                  "name": "@parameters('$connections')['planner']['connectionId']"
+                }
+              },
+              "method": "patch",
+              "path": "/tasks/@{first(body('Find_Existing_Task')?['value'])?['id']}",
+              "body": {
+                "title": "@body('Parse_Updated_Issue')?['issue']?['title']",
+                "priority": "@outputs('Map_Updated_Priority')",
+                "dueDateTime": "@if(not(empty(body('Parse_Updated_Issue')?['issue']?['milestone']?['due_on'])), formatDateTime(body('Parse_Updated_Issue')?['issue']?['milestone']?['due_on'], 'yyyy-MM-ddTHH:mm:ssZ'), null)"
+              },
+              "headers": {
+                "If-Match": "@body('Get_Task_Details')?['@odata.etag']"
+              }
+            },
+            "runAfter": {
+              "Map_Updated_Priority": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "update-task"
+            }
+          },
+          "Post_Update_Comment": {
+            "type": "ApiConnection",
+            "inputs": {
+              "host": {
+                "connection": {
+                  "name": "@parameters('$connections')['github']['connectionId']"
+                }
+              },
+              "method": "post",
+              "path": "/repos/@{encodeURIComponent('electricgltd')}/P100-Electrical-Agent-Suite/issues/@{body('Parse_Updated_Issue')?['issue']?['number']}/comments",
+              "body": {
+                "body": "🔄 **Planner Task Updated**\n\nThe linked Planner task has been updated with the latest issue changes.\n\n**Updated Fields:**\n- Title: @{body('Parse_Updated_Issue')?['issue']?['title']}\n- Priority: @{if(equals(outputs('Map_Updated_Priority'), 1), 'Urgent (Critical)', if(equals(outputs('Map_Updated_Priority'), 3), 'Important', if(equals(outputs('Map_Updated_Priority'), 9), 'Low (Non-Critical)', 'Normal')))}\n- Due Date: @{if(not(empty(body('Parse_Updated_Issue')?['issue']?['milestone']?['due_on'])), formatDateTime(body('Parse_Updated_Issue')?['issue']?['milestone']?['due_on'], 'MMM dd, yyyy'), 'Not set')}\n\n**Task ID:** `@{first(body('Find_Existing_Task')?['value'])?['id']}`"
+              }
+            },
+            "runAfter": {
+              "Update_Task": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "post-update-comment"
+            }
+          }
+        },
+        "else": {
+          "actions": {
+            "Post_No_Task_Comment": {
+              "type": "ApiConnection",
+              "inputs": {
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['github']['connectionId']"
+                  }
+                },
+                "method": "post",
+                "path": "/repos/@{encodeURIComponent('electricgltd')}/P100-Electrical-Agent-Suite/issues/@{body('Parse_Updated_Issue')?['issue']?['number']}/comments",
+                "body": {
+                  "body": "ℹ️ **No Planner Task Found**\n\nThis issue doesn't have a linked Planner task to update.\n\n**To create a task:** Add the `Ready Now` label or close and reopen this issue."
+                }
+              },
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "post-no-task-comment"
+              }
+            }
+          }
+        },
+        "runAfter": {
+          "Find_Existing_Task": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "condition-task-found"
+        }
+      },
+      "Update_Error_Handling": {
+        "type": "Scope",
+        "actions": {
+          "Post_Update_Error_Comment": {
+            "type": "ApiConnection",
+            "inputs": {
+              "host": {
+                "connection": {
+                  "name": "@parameters('$connections')['github']['connectionId']"
+                }
+              },
+              "method": "post",
+              "path": "/repos/@{encodeURIComponent('electricgltd')}/P100-Electrical-Agent-Suite/issues/@{body('Parse_Updated_Issue')?['issue']?['number']}/comments",
+              "body": {
+                "body": "❌ **Planner Update Failed**\n\nThere was an error updating the linked Planner task:\n\n```\n@{if(not(empty(result('Update_Task')?['error'])), result('Update_Task')['error']['message'], 'Unknown error occurred during update')}\n```\n\n**Task ID:** `@{if(greater(length(body('Find_Existing_Task')?['value']), 0), first(body('Find_Existing_Task')?['value'])?['id'], 'Not found')}`\n\n_Please try the update again or contact your administrator._"
+              }
+            },
+            "runAfter": {},
+            "metadata": {
+              "operationMetadataId": "post-update-error-comment"
+            }
+          }
+        },
+        "runAfter": {
+          "Condition_Task_Found": [
+            "Failed",
+            "TimedOut"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "update-error-handling"
+        }
+      }
+    },
+    "outputs": {}
+  },
+  "parameters": {
+    "$connections": {
+      "value": {
+        "github": {
+          "connectionId": "/subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.Web/connections/github",
+          "connectionName": "github",
+          "id": "/subscriptions/{subscription-id}/providers/Microsoft.Web/locations/{location}/managedApis/github"
+        },
+        "planner": {
+          "connectionId": "/subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.Web/connections/planner",
+          "connectionName": "planner",
+          "id": "/subscriptions/{subscription-id}/providers/Microsoft.Web/locations/{location}/managedApis/planner"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "// Configuration Template for GitHub to Planner Flows": "",
+  "// Copy this file and update the values for your environment": "",
+  "// Do not commit the actual IDs to version control": "",
+  
+  "planId": "YOUR_PLANNER_PLAN_ID_HERE",
+  "bucketId": "YOUR_PLANNER_BUCKET_ID_HERE",
+  
+  "// How to find these IDs:": "",
+  "// 1. Go to https://tasks.office.com": "",
+  "// 2. Open your plan": "",
+  "// 3. Plan ID is in the URL: https://tasks.office.com/{tenant}/Home/PlanViews/{PLAN_ID}": "",
+  "// 4. Bucket ID can be found using browser dev tools or Graph API": "",
+  
+  "github": {
+    "owner": "electricgltd",
+    "repo": "P100-Electrical-Agent-Suite"
+  },
+  
+  "priorityMapping": {
+    "Critical": 1,
+    "Important": 3, 
+    "Non-Critical": 9,
+    "default": 5
+  },
+  
+  "labels": {
+    "trigger": "Ready Now",
+    "priorities": ["Critical", "Important", "Non-Critical"]
+  }
+}
