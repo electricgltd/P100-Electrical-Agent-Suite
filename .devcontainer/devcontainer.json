@@ -1,0 +1,23 @@
+{
+  "name": "P100 Electrical Agent Suite",
+  "image": "mcr.microsoft.com/devcontainers/dotnet:8.0",
+  "remoteUser": "vscode",
+  "features": {},
+  "postCreateCommand": "./.devcontainer/postCreate.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-dotnettools.csharp",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-vscode.powershell",
+        "eamodio.gitlens",
+        "github.vscode-pull-request-github",
+        "redhat.vscode-yaml",
+        "davidanson.vscode-markdownlint",
+        "ms-azuretools.vscode-docker",
+        "esbenp.prettier-vscode"
+      ]
+    }
+  }
+}
