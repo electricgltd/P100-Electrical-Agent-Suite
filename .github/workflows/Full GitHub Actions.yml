@@ -1,0 +1,116 @@
+name: Power Platform DEV Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: pwsh
+
+jobs:
+  export-and-check:
+    runs-on: windows-latest
+
+    steps:
+      # 1. Checkout repo
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # 2. Install Power Platform CLI (use official GitHub Action)
+      - name: Install Power Platform Tools
+        uses: microsoft/powerplatform-actions/actions-install@v1
+
+      # Ensure pac.exe is available in PATH for subsequent steps
+      - name: Locate PAC and add to PATH
+        run: |
+          # Try to find pac.exe and add its folder to GITHUB_PATH so later steps can use it
+          $pac = Get-Command pac.exe -ErrorAction SilentlyContinue
+          if (-not $pac) {
+            $found = Get-ChildItem 'C:\Program Files*' -Filter pac.exe -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
+            if ($found) { $pacDir = $found.DirectoryName } else { $pacDir = $null }
+          } else {
+            $pacDir = Split-Path $pac.Path
+          }
+
+          if ($pacDir) {
+            Write-Host "Found pac at: $pacDir"
+            # Add to GITHUB_PATH so subsequent steps will have it on PATH
+            "$pacDir" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          } else {
+            Write-Host "pac.exe not found after installation; subsequent steps may fail."
+            # list Program Files for debugging
+            Get-ChildItem 'C:\Program Files*' -Directory | Select-Object FullName | Write-Host
+          }
+
+      # Determine which environment URL to use (Dev or Test)
+      - name: Select target environment
+        env:
+          PP_ENVIRONMENT: ${{ secrets.PP_ENVIRONMENT }}
+          PP_DEV_URL: ${{ secrets.PP_DEV_URL }}
+          PP_TEST_URL: ${{ secrets.PP_TEST_URL }}
+        run: |
+          # If PP_ENVIRONMENT equals 'Test' (case-insensitive) and a PP_TEST_URL is provided, use it.
+          if ($env:PP_ENVIRONMENT -and $env:PP_ENVIRONMENT.ToLower() -eq 'test') {
+            if ($env:PP_TEST_URL) { $chosen = $env:PP_TEST_URL } else { Write-Host 'PP_ENVIRONMENT=Test but PP_TEST_URL not set; falling back to PP_DEV_URL'; $chosen = $env:PP_DEV_URL }
+          } else {
+            $chosen = $env:PP_DEV_URL
+          }
+          Write-Host "Chosen environment URL: $chosen"
+          # Persist for later steps
+          "ENV_URL=$chosen" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      # Confirm chosen environment without revealing the URL (prints a short hash)
+      - name: Confirm chosen environment (masked)
+        run: |
+          if (-not $env:ENV_URL) { Write-Host 'ENV_URL not set'; exit 1 }
+          $sha = [System.BitConverter]::ToString((New-Object System.Security.Cryptography.SHA256Managed).ComputeHash([Text.Encoding]::UTF8.GetBytes($env:ENV_URL))).Replace('-','').ToLower()
+          $short = $sha.Substring(0,8)
+          Write-Host "ENV_URL hash (first 8 hex chars): $short"
+
+      - name: Sanity check (reusable)
+        uses: ./.github/actions/sanity-check
+        with:
+          env_url: ${{ secrets.PP_DEV_URL }}
+          pp_dev_url: ${{ secrets.PP_DEV_URL }}
+          pp_test_url: ${{ secrets.PP_TEST_URL }}
+          pp_tenant_id: ${{ secrets.PP_TENANT_ID }}
+          pp_app_id: ${{ secrets.PP_APP_ID }}
+          pp_client_secret: ${{ secrets.PP_CLIENT_SECRET }}
+
+      # 3. Authenticate with Power Platform
+      - name: Authenticate with Power Platform
+        env:
+          PP_TENANT_ID: ${{ secrets.PP_TENANT_ID }}
+          PP_APP_ID: ${{ secrets.PP_APP_ID }}
+          PP_CLIENT_SECRET: ${{ secrets.PP_CLIENT_SECRET }}
+        run: |
+          pac auth create --url "$env:ENV_URL" --tenant "$env:PP_TENANT_ID" --applicationId "$env:PP_APP_ID" --clientSecret "$env:PP_CLIENT_SECRET"
+
+      # 4. Export unmanaged solution
+      - name: Export Solution (Unmanaged)
+        run: |
+          pac solution export --name DesignAndCosting --path "DesignAndCosting.zip" --managed false --overwrite
+
+      # 5. Run Solution Checker
+      - name: Run Solution Checker
+        run: |
+          pac solution check --path "DesignAndCosting.zip" --outputDirectory "checker-results" --ruleLevel "Error"
+
+      # 6. Upload exported solution
+      - name: Upload Exported Solution
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: DesignAndCosting-solution
+          path: DesignAndCosting.zip
+
+      # 7. Upload Solution Checker report
+      - name: Upload Solution Checker Results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: solution-checker-report
+          path: checker-results

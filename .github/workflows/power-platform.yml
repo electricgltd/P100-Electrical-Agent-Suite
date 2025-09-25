@@ -9,6 +9,8 @@ on:
 jobs:
   pack-solution:
     runs-on: ubuntu-latest
+    env:
+      SOLUTION_NAME: DesignAndCosting
 
     steps:
       - name: Checkout repository
@@ -40,6 +42,11 @@ jobs:
         with:
           solution-folder: solutions/DesignAndCosting
           solution-file: out/DesignAndCosting.zip
+
+      - name: Confirm pack
+        if: steps.check_sources.outputs.found == 'true'
+        run: |
+          echo "Packed solution: $SOLUTION_NAME"
 
       - name: Upload packed solution artifact
         if: steps.check_sources.outputs.found == 'true'

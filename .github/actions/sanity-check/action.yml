@@ -1,0 +1,42 @@
+name: Sanity check
+description: "Composite action to perform pre-flight sanity checks for Power Platform workflows.\nAccepts environment and secret inputs and fails early with clear messages if misconfigured."
+inputs:
+  env_url:
+    description: 'Chosen environment URL (optional)'
+    required: false
+  pp_dev_url:
+    description: 'Dev environment URL (optional)'
+    required: false
+  pp_test_url:
+    description: 'Test environment URL (optional)'
+    required: false
+  pp_tenant_id:
+    description: 'Tenant ID'
+    required: false
+  pp_app_id:
+    description: 'App (client) ID'
+    required: false
+  pp_client_secret:
+    description: 'Client secret'
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - name: Run sanity checks
+      shell: pwsh
+      run: |
+        $missing = @()
+        if (-not "${{ inputs.env_url }}") { $missing += 'ENV_URL (selected environment)' }
+        if (-not "${{ inputs.pp_app_id }}") { $missing += 'PP_APP_ID' }
+        if (-not "${{ inputs.pp_client_secret }}") { $missing += 'PP_CLIENT_SECRET' }
+        if (-not "${{ inputs.pp_tenant_id }}") { $missing += 'PP_TENANT_ID' }
+        if ($missing.Count -gt 0) {
+          Write-Host "Missing required secrets/env: $($missing -join ', ')"; exit 1
+        }
+
+        if ("${{ inputs.pp_dev_url }}" -and "${{ inputs.pp_test_url }}" -and "${{ inputs.pp_dev_url }}" -eq "${{ inputs.pp_test_url }}") {
+          Write-Host 'Warning: PP_DEV_URL and PP_TEST_URL are identical. This is allowed for single-environment setups; workflows will target the configured environment.'
+        }
+
+        Write-Host 'Sanity check passed.'

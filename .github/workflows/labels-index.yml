@@ -1,0 +1,25 @@
+name: Labels index
+
+on:
+  push:
+    paths:
+      - 'docs/GitHub/Colour_Labels_GitHub.xlsx'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install deps
+        run: python -m pip install pandas openpyxl pyyaml
+      - name: Run parser
+        run: python scripts/parse_labels_xlsx.py
+      - name: Upload labels artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: labels-yml
+          path: .github/labels.yml
