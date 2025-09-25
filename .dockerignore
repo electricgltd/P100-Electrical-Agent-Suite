@@ -1,0 +1,31 @@
+# Ignore virtual environments
+.venv
+env
+__pycache__
+*.pyc
+
+# Git
+.git
+.gitignore
+
+# Node
+node_modules
+
+# OS files
+.DS_Store
+
+# Editor files
+.vscode
+
+# Large files and artifacts
+*.xlsx
+*.docx
+*.zip
+*.tar.gz
+
+# Docker
+docker-compose.override.yml
+
+# Ignore workspace-local dev tokens
+.env
+.env.*
