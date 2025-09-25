@@ -37,6 +37,9 @@ labels:
 - name: Non-Critical
   color: 00A650
   description: Categorise Issues
+- name: Ready Now
+  color: 1E90FF
+  description: Issue is ready for immediate action and should be synced to Planner
 - name: 'Platform: ALM & Extensibility'
   color: 4B5563
   description: Management of the solution

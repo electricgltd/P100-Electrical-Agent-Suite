@@ -1,0 +1,253 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      },
+      "planId": {
+        "defaultValue": "YOUR_PLANNER_PLAN_ID",
+        "type": "String"
+      },
+      "bucketId": {
+        "defaultValue": "YOUR_PLANNER_BUCKET_ID",
+        "type": "String"
+      }
+    },
+    "triggers": {
+      "When_an_issue_is_labeled": {
+        "type": "ApiConnectionWebhook",
+        "inputs": {
+          "host": {
+            "connection": {
+              "name": "@parameters('$connections')['github']['connectionId']"
+            }
+          },
+          "path": "/trigger/repos/@{encodeURIComponent('electricgltd')}/P100-Electrical-Agent-Suite/issues",
+          "queries": {
+            "events": "labeled"
+          }
+        },
+        "conditions": [
+          {
+            "expression": "@or(equals(triggerBody()?['label']?['name'], 'Ready Now'), equals(triggerBody()?['action'], 'opened'))"
+          }
+        ],
+        "metadata": {
+          "operationMetadataId": "github-issue-labeled"
+        }
+      }
+    },
+    "actions": {
+      "Initialize_Issue_Data": {
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "issueData",
+              "type": "object",
+              "value": {
+                "number": "@triggerBody()?['issue']?['number']",
+                "title": "@triggerBody()?['issue']?['title']",
+                "url": "@triggerBody()?['issue']?['html_url']",
+                "body": "@triggerBody()?['issue']?['body']",
+                "labels": "@triggerBody()?['issue']?['labels']",
+                "milestone": "@triggerBody()?['issue']?['milestone']",
+                "repository": "@triggerBody()?['repository']?['full_name']"
+              }
+            }
+          ]
+        },
+        "runAfter": {},
+        "metadata": {
+          "operationMetadataId": "initialize-issue-data"
+        }
+      },
+      "Check_For_Existing_Task": {
+        "type": "ApiConnection",
+        "inputs": {
+          "host": {
+            "connection": {
+              "name": "@parameters('$connections')['planner']['connectionId']"
+            }
+          },
+          "method": "get",
+          "path": "/plans/@{parameters('planId')}/tasks",
+          "queries": {
+            "$filter": "contains(notes, variables('issueData')?['url'])"
+          }
+        },
+        "runAfter": {
+          "Initialize_Issue_Data": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "check-existing-task"
+        }
+      },
+      "Condition_Task_Exists": {
+        "type": "If",
+        "expression": {
+          "and": [
+            {
+              "greater": [
+                "@length(body('Check_For_Existing_Task')?['value'])",
+                0
+              ]
+            }
+          ]
+        },
+        "actions": {
+          "Update_Existing_Task": {
+            "type": "ApiConnection",
+            "inputs": {
+              "host": {
+                "connection": {
+                  "name": "@parameters('$connections')['planner']['connectionId']"
+                }
+              },
+              "method": "patch",
+              "path": "/tasks/@{first(body('Check_For_Existing_Task')?['value'])?['id']}",
+              "body": {
+                "title": "@variables('issueData')?['title']",
+                "priority": "@outputs('Map_Priority_Label')",
+                "dueDateTime": "@if(not(empty(variables('issueData')?['milestone']?['due_on'])), formatDateTime(variables('issueData')?['milestone']?['due_on'], 'yyyy-MM-ddTHH:mm:ssZ'), null)"
+              },
+              "headers": {
+                "If-Match": "@first(body('Check_For_Existing_Task')?['value'])?['@odata.etag']"
+              }
+            },
+            "runAfter": {},
+            "metadata": {
+              "operationMetadataId": "update-existing-task"
+            }
+          }
+        },
+        "else": {
+          "actions": {
+            "Create_New_Task": {
+              "type": "ApiConnection",
+              "inputs": {
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['planner']['connectionId']"
+                  }
+                },
+                "method": "post",
+                "path": "/tasks",
+                "body": {
+                  "planId": "@parameters('planId')",
+                  "bucketId": "@parameters('bucketId')",
+                  "title": "@variables('issueData')?['title']",
+                  "notes": "@{concat('GitHub Issue: ', variables('issueData')?['url'], '\r\n\r\nRepository: ', variables('issueData')?['repository'], '\r\n\r\nLabels: ', join(select(variables('issueData')?['labels'], item()['name']), ', '), '\r\n\r\nDescription:\r\n', if(greater(length(variables('issueData')?['body']), 500), concat(substring(variables('issueData')?['body'], 0, 500), '...'), variables('issueData')?['body']))}",
+                  "priority": "@outputs('Map_Priority_Label')",
+                  "dueDateTime": "@if(not(empty(variables('issueData')?['milestone']?['due_on'])), formatDateTime(variables('issueData')?['milestone']?['due_on'], 'yyyy-MM-ddTHH:mm:ssZ'), null)"
+                }
+              },
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "create-new-task"
+              }
+            },
+            "Add_Task_ID_Comment": {
+              "type": "ApiConnection",
+              "inputs": {
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['github']['connectionId']"
+                  }
+                },
+                "method": "post",
+                "path": "/repos/@{encodeURIComponent('electricgltd')}/P100-Electrical-Agent-Suite/issues/@{variables('issueData')?['number']}/comments",
+                "body": {
+                  "body": "@{concat('✅ **Planner Task Created**\r\n\r\nThis issue has been automatically synced to Microsoft Planner.\r\n\r\n**Planner Task ID:** `', body('Create_New_Task')?['id'], '`\r\n**Plan:** ', parameters('planId'), '\r\n**Bucket:** ', parameters('bucketId'), '\r\n\r\n_This task will be updated automatically when the issue title, priority labels, or milestone due date changes._')}"
+                }
+              },
+              "runAfter": {
+                "Create_New_Task": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "add-task-id-comment"
+              }
+            }
+          }
+        },
+        "runAfter": {
+          "Map_Priority_Label": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "condition-task-exists"
+        }
+      },
+      "Map_Priority_Label": {
+        "type": "Compose",
+        "inputs": "@if(contains(string(variables('issueData')?['labels']), 'Critical'), 1, if(contains(string(variables('issueData')?['labels']), 'Important'), 3, if(contains(string(variables('issueData')?['labels']), 'Non-Critical'), 9, 5)))",
+        "runAfter": {
+          "Check_For_Existing_Task": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "map-priority-label"
+        }
+      },
+      "Handle_Errors": {
+        "type": "Scope",
+        "actions": {
+          "Add_Error_Comment": {
+            "type": "ApiConnection",
+            "inputs": {
+              "host": {
+                "connection": {
+                  "name": "@parameters('$connections')['github']['connectionId']"
+                }
+              },
+              "method": "post",
+              "path": "/repos/@{encodeURIComponent('electricgltd')}/P100-Electrical-Agent-Suite/issues/@{variables('issueData')?['number']}/comments",
+              "body": {
+                "body": "@{concat('❌ **Planner Sync Failed**\r\n\r\nThere was an error syncing this issue to Microsoft Planner:\r\n\r\n```\r\n', if(not(empty(result('Create_New_Task')?['error'])), result('Create_New_Task')['error']['message'], if(not(empty(result('Update_Existing_Task')?['error'])), result('Update_Existing_Task')['error']['message'], 'Unknown error occurred')), '\r\n```\r\n\r\n**To retry:** Remove and re-add the `Ready Now` label to trigger sync again.\r\n\r\n_Please contact your administrator if this issue persists._')}"
+              }
+            },
+            "runAfter": {},
+            "metadata": {
+              "operationMetadataId": "add-error-comment"
+            }
+          }
+        },
+        "runAfter": {
+          "Condition_Task_Exists": [
+            "Failed",
+            "TimedOut"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "handle-errors"
+        }
+      }
+    },
+    "outputs": {}
+  },
+  "parameters": {
+    "$connections": {
+      "value": {
+        "github": {
+          "connectionId": "/subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.Web/connections/github",
+          "connectionName": "github",
+          "id": "/subscriptions/{subscription-id}/providers/Microsoft.Web/locations/{location}/managedApis/github"
+        },
+        "planner": {
+          "connectionId": "/subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.Web/connections/planner",
+          "connectionName": "planner",
+          "id": "/subscriptions/{subscription-id}/providers/Microsoft.Web/locations/{location}/managedApis/planner"
+        }
+      }
+    }
+  }
+}

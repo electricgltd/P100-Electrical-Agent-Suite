@@ -1,0 +1,263 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      },
+      "planId": {
+        "defaultValue": "YOUR_PLANNER_PLAN_ID",
+        "type": "String"
+      },
+      "bucketId": {
+        "defaultValue": "YOUR_PLANNER_BUCKET_ID",
+        "type": "String"
+      }
+    },
+    "triggers": {
+      "When_an_issue_is_opened": {
+        "type": "ApiConnectionWebhook",
+        "inputs": {
+          "host": {
+            "connection": {
+              "name": "@parameters('$connections')['github']['connectionId']"
+            }
+          },
+          "path": "/trigger/repos/@{encodeURIComponent('electricgltd')}/P100-Electrical-Agent-Suite/issues",
+          "queries": {
+            "events": "opened"
+          }
+        },
+        "metadata": {
+          "operationMetadataId": "github-issue-opened"
+        }
+      }
+    },
+    "actions": {
+      "Parse_Issue_Data": {
+        "type": "ParseJson",
+        "inputs": {
+          "content": "@triggerBody()",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "issue": {
+                "type": "object",
+                "properties": {
+                  "number": {"type": "integer"},
+                  "title": {"type": "string"},
+                  "body": {"type": "string"},
+                  "html_url": {"type": "string"},
+                  "labels": {"type": "array"},
+                  "milestone": {"type": "object"}
+                }
+              },
+              "repository": {
+                "type": "object",
+                "properties": {
+                  "full_name": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "runAfter": {},
+        "metadata": {
+          "operationMetadataId": "parse-issue-data"
+        }
+      },
+      "Map_Priority_From_Labels": {
+        "type": "Compose",
+        "inputs": "@if(contains(string(body('Parse_Issue_Data')?['issue']?['labels']), 'Critical'), 1, if(contains(string(body('Parse_Issue_Data')?['issue']?['labels']), 'Important'), 3, if(contains(string(body('Parse_Issue_Data')?['issue']?['labels']), 'Non-Critical'), 9, 5)))",
+        "runAfter": {
+          "Parse_Issue_Data": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "map-priority-from-labels"
+        }
+      },
+      "Compose_Task_Notes": {
+        "type": "Compose",
+        "inputs": "@concat('GitHub Issue: ', body('Parse_Issue_Data')?['issue']?['html_url'], '\r\n\r\nRepository: ', body('Parse_Issue_Data')?['repository']?['full_name'], '\r\n\r\nLabels: ', join(select(body('Parse_Issue_Data')?['issue']?['labels'], item()['name']), ', '), '\r\n\r\nDescription:\r\n', if(greater(length(body('Parse_Issue_Data')?['issue']?['body']), 500), concat(substring(body('Parse_Issue_Data')?['issue']?['body'], 0, 500), '...'), body('Parse_Issue_Data')?['issue']?['body']))",
+        "runAfter": {
+          "Map_Priority_From_Labels": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "compose-task-notes"
+        }
+      },
+      "Check_For_Duplicate_Task": {
+        "type": "ApiConnection",
+        "inputs": {
+          "host": {
+            "connection": {
+              "name": "@parameters('$connections')['planner']['connectionId']"
+            }
+          },
+          "method": "get",
+          "path": "/plans/@{parameters('planId')}/tasks",
+          "queries": {
+            "$filter": "contains(notes, '@{body('Parse_Issue_Data')?['issue']?['html_url']}')"
+          }
+        },
+        "runAfter": {
+          "Compose_Task_Notes": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "check-duplicate-task"
+        }
+      },
+      "Condition_No_Duplicate_Exists": {
+        "type": "If",
+        "expression": {
+          "and": [
+            {
+              "equals": [
+                "@length(body('Check_For_Duplicate_Task')?['value'])",
+                0
+              ]
+            }
+          ]
+        },
+        "actions": {
+          "Create_Planner_Task": {
+            "type": "ApiConnection",
+            "inputs": {
+              "host": {
+                "connection": {
+                  "name": "@parameters('$connections')['planner']['connectionId']"
+                }
+              },
+              "method": "post",
+              "path": "/tasks",
+              "body": {
+                "planId": "@parameters('planId')",
+                "bucketId": "@parameters('bucketId')",
+                "title": "@body('Parse_Issue_Data')?['issue']?['title']",
+                "notes": "@outputs('Compose_Task_Notes')",
+                "priority": "@outputs('Map_Priority_From_Labels')",
+                "dueDateTime": "@if(not(empty(body('Parse_Issue_Data')?['issue']?['milestone']?['due_on'])), formatDateTime(body('Parse_Issue_Data')?['issue']?['milestone']?['due_on'], 'yyyy-MM-ddTHH:mm:ssZ'), null)"
+              }
+            },
+            "runAfter": {},
+            "metadata": {
+              "operationMetadataId": "create-planner-task"
+            }
+          },
+          "Post_Success_Comment": {
+            "type": "ApiConnection",
+            "inputs": {
+              "host": {
+                "connection": {
+                  "name": "@parameters('$connections')['github']['connectionId']"
+                }
+              },
+              "method": "post",
+              "path": "/repos/@{encodeURIComponent('electricgltd')}/P100-Electrical-Agent-Suite/issues/@{body('Parse_Issue_Data')?['issue']?['number']}/comments",
+              "body": {
+                "body": "✅ **Planner Task Created**\n\nThis issue has been automatically synced to Microsoft Planner.\n\n**Planner Task ID:** `@{body('Create_Planner_Task')?['id']}`\n**Plan:** @{parameters('planId')}\n**Bucket:** @{parameters('bucketId')}\n\n_This task will be updated automatically when the issue title, priority labels, or milestone due date changes._"
+              }
+            },
+            "runAfter": {
+              "Create_Planner_Task": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "post-success-comment"
+            }
+          }
+        },
+        "else": {
+          "actions": {
+            "Post_Duplicate_Comment": {
+              "type": "ApiConnection",
+              "inputs": {
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['github']['connectionId']"
+                  }
+                },
+                "method": "post",
+                "path": "/repos/@{encodeURIComponent('electricgltd')}/P100-Electrical-Agent-Suite/issues/@{body('Parse_Issue_Data')?['issue']?['number']}/comments",
+                "body": {
+                  "body": "ℹ️ **Planner Task Already Exists**\n\nA Planner task for this issue already exists. No duplicate was created.\n\n**Existing Task ID:** `@{first(body('Check_For_Duplicate_Task')?['value'])?['id']}`\n\n_To update the task, modify the issue title, priority labels, or milestone due date._"
+                }
+              },
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "post-duplicate-comment"
+              }
+            }
+          }
+        },
+        "runAfter": {
+          "Check_For_Duplicate_Task": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "condition-no-duplicate-exists"
+        }
+      },
+      "Error_Handling": {
+        "type": "Scope",
+        "actions": {
+          "Post_Error_Comment": {
+            "type": "ApiConnection",
+            "inputs": {
+              "host": {
+                "connection": {
+                  "name": "@parameters('$connections')['github']['connectionId']"
+                }
+              },
+              "method": "post",
+              "path": "/repos/@{encodeURIComponent('electricgltd')}/P100-Electrical-Agent-Suite/issues/@{body('Parse_Issue_Data')?['issue']?['number']}/comments",
+              "body": {
+                "body": "❌ **Planner Sync Failed**\n\nThere was an error syncing this issue to Microsoft Planner:\n\n```\n@{if(not(empty(result('Create_Planner_Task')?['error'])), result('Create_Planner_Task')['error']['message'], 'Unknown error occurred during sync')}\n```\n\n**To retry:** Close and reopen this issue to trigger sync again.\n\n_Please contact your administrator if this issue persists._"
+              }
+            },
+            "runAfter": {},
+            "metadata": {
+              "operationMetadataId": "post-error-comment"
+            }
+          }
+        },
+        "runAfter": {
+          "Condition_No_Duplicate_Exists": [
+            "Failed",
+            "TimedOut"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "error-handling"
+        }
+      }
+    },
+    "outputs": {}
+  },
+  "parameters": {
+    "$connections": {
+      "value": {
+        "github": {
+          "connectionId": "/subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.Web/connections/github",
+          "connectionName": "github",
+          "id": "/subscriptions/{subscription-id}/providers/Microsoft.Web/locations/{location}/managedApis/github"
+        },
+        "planner": {
+          "connectionId": "/subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.Web/connections/planner",
+          "connectionName": "planner",
+          "id": "/subscriptions/{subscription-id}/providers/Microsoft.Web/locations/{location}/managedApis/planner"
+        }
+      }
+    }
+  }
+}
