@@ -48,3 +48,8 @@ jobs:
         if: always()
         run: |
           docker rm -f p100-mcp-ci || true
+
+      - name: Run pytest inside built image
+        # This runs tests in the same environment the app will run in
+        run: |
+          docker run --rm p100-mcp:ci /bin/sh -c "python -m pip install -r /app/mcp/requirements.txt && pytest -q /app/mcp/tests"
