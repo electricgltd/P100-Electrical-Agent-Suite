@@ -19,6 +19,7 @@ jobs:
     env:
       DEV_URL: ${{ secrets.PP_DEV_URL }}
       TEST_URL: ${{ secrets.PP_TEST_URL }}
+      SOLUTION_NAME: DesignAndCosting
 
     steps:
       - name: Checkout repository
@@ -38,6 +39,16 @@ jobs:
           if [ -n "$TEST_URL" ] && [ "$DEV_URL" = "$TEST_URL" ]; then
             echo "PP_DEV_URL and PP_TEST_URL are identical. Failing to avoid cross-env confusion."; exit 1
           fi
+
+      - name: Sanity check (reusable)
+        uses: ./.github/actions/sanity-check
+        with:
+          env_url: ${{ secrets.PP_DEV_URL }}
+          pp_dev_url: ${{ secrets.PP_DEV_URL }}
+          pp_test_url: ${{ secrets.PP_TEST_URL }}
+          pp_tenant_id: ${{ secrets.PP_TENANT_ID }}
+          pp_app_id: ${{ secrets.PP_APP_ID }}
+          pp_client_secret: ${{ secrets.PP_CLIENT_SECRET }}
 
       # Ensure output folder exists
       - name: Prepare output folder

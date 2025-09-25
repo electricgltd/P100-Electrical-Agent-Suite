@@ -1,0 +1,58 @@
+name: Sanity check
+description: "Composite action to perform pre-flight sanity checks for Power Platform workflows.\nAccepts environment and secret inputs and fails early with clear messages if misconfigured."
+inputs:
+  env_url:
+    description: 'Chosen environment URL (optional)'
+    required: false
+  pp_dev_url:
+    description: 'Dev environment URL (optional)'
+    required: false
+  pp_test_url:
+    description: 'Test environment URL (optional)'
+    required: false
+  pp_prod_url:
+    description: 'Prod environment URL (optional) — if set, workflows must opt-in explicitly to allow prod imports'
+    required: false
+  pp_tenant_id:
+    description: 'Tenant ID'
+    required: false
+  pp_app_id:
+    description: 'App (client) ID'
+    required: false
+  pp_client_secret:
+    description: 'Client secret'
+    required: false
+  allow_prod_import:
+    description: "Explicit opt-in to allow operations that target Prod. Must be 'true' to permit when PP_PROD_URL is set."
+    required: false
+    default: 'false'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Run sanity checks
+      shell: pwsh
+      run: |
+        $missing = @()
+        if (-not "${{ inputs.env_url }}") { $missing += 'ENV_URL (selected environment)' }
+        if (-not "${{ inputs.pp_app_id }}") { $missing += 'PP_APP_ID' }
+        if (-not "${{ inputs.pp_client_secret }}") { $missing += 'PP_CLIENT_SECRET' }
+        if (-not "${{ inputs.pp_tenant_id }}") { $missing += 'PP_TENANT_ID' }
+        if ($missing.Count -gt 0) {
+          Write-Host "Missing required secrets/env: $($missing -join ', ')"; exit 1
+        }
+
+        if ("${{ inputs.pp_dev_url }}" -and "${{ inputs.pp_test_url }}" -and "${{ inputs.pp_dev_url }}" -eq "${{ inputs.pp_test_url }}") {
+          Write-Host 'PP_DEV_URL and PP_TEST_URL are identical. Failing to avoid accidental cross-environment operations.'; exit 1
+        }
+
+        # Prevent accidental usage of a configured Prod URL unless the workflow explicitly opts in
+        if ("${{ inputs.pp_prod_url }}") {
+          if ("${{ inputs.allow_prod_import }}" -ne 'true') {
+            Write-Host 'PP_PROD_URL is configured but allow_prod_import is not set to "true".\nSet allow_prod_import: "true" on the sanity-check action invocation to acknowledge and permit Prod-targeting steps.'; exit 1
+          } else {
+            Write-Host 'PP_PROD_URL present and allow_prod_import=true — workflow has opted in to Prod operations.'
+          }
+        }
+
+        Write-Host 'Sanity check passed.'

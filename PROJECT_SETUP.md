@@ -108,12 +108,16 @@ We keep the unpacked solution under /solutions/DesignAndCosting.
 Workflows use GitHub Secrets (no secrets in repo).
 Secrets to add (Repo → Settings → Secrets and variables → Actions → New repository secret)
 
-PPAC_CLIENT_ID – Azure AD app (service principal)
-PPAC_CLIENT_SECRET – Secret for the app
-PPAC_TENANT_ID – Azure AD tenant
-PPAC_DEV_URL – e.g., https://orgabc123.crm11.dynamics.com
-PPAC_TEST_URL – Test environment URL
-(Optional) PPAC_PROD_URL – Prod environment URL (add when you’re ready)
+Use the canonical names below. Keep values secret — do not store them in the repo.
+
+- PP_TENANT_ID — Azure AD tenant id (GUID)
+- PP_APP_ID — Azure AD application (service principal) id
+- PP_CLIENT_SECRET — Client secret for the Azure AD app
+- PP_DEV_URL — Dev environment URL (e.g. https://orgabc.crm11.dynamics.com)
+- PP_TEST_URL — Test environment URL (optional for single‑env projects)
+- PP_ENVIRONMENT — (optional) set to `Dev` or `Test` to control which URL is used by workflows
+
+(Optional) PP_PROD_URL — Prod environment URL (add when you’re ready)
 
 ℹ️ SOLUTION_NAME below is set to DesignAndCosting to match your folder. This must be your solution’s unique name (not display name).
 
