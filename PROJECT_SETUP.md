@@ -117,7 +117,7 @@ Use the canonical names below. Keep values secret — do not store them in the r
 - PP_TEST_URL — Test environment URL (optional for single‑env projects)
 - PP_ENVIRONMENT — (optional) set to `Dev` or `Test` to control which URL is used by workflows
 
-(Optional) PP_PROD_URL — Prod environment URL (add when you’re ready)
+ 
 
 ℹ️ SOLUTION_NAME below is set to DesignAndCosting to match your folder. This must be your solution’s unique name (not display name).
 
@@ -215,26 +215,7 @@ Dev → Git workflow keeps /solutions/DesignAndCosting in sync.
 Release → Test builds a Managed package and imports it.
 Add a similar job for Prod later by duplicating the Test job and swapping PPAC_TEST_URL for PPAC_PROD_URL.
 
-Opt-in example for Prod safety
------------------------------
-
-When you intentionally want a workflow to target Prod (imports or other destructive ops), explicitly opt-in when calling the sanity-check action. This makes the intention visible and prevents accidental Prod runs:
-
-```yaml
-      - name: Sanity check (acknowledge Prod)
-        uses: ./.github/actions/sanity-check
-        with:
-          env_url: ${{ secrets.PP_PROD_URL }}
-          pp_dev_url: ${{ secrets.PP_DEV_URL }}
-          pp_test_url: ${{ secrets.PP_TEST_URL }}
-          pp_prod_url: ${{ secrets.PP_PROD_URL }}
-          pp_tenant_id: ${{ secrets.PP_TENANT_ID }}
-          pp_app_id: ${{ secrets.PP_APP_ID }}
-          pp_client_secret: ${{ secrets.PP_CLIENT_SECRET }}
-          allow_prod_import: 'true'   # MUST be explicitly set to allow Prod-targeting steps
-```
-
-Keep PP_PROD_URL out of secrets until you actually add this opt-in to a workflow.
+ 
 
 6) Architecture (Mermaid)
 ```mermaid
