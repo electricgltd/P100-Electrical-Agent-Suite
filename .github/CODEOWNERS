@@ -1,0 +1,5 @@
+# CODEOWNERS
+# Default code owner for the repository. This file indicates who is responsible for
+# reviewing and approving changes to the repository contents.
+
+* @electricgltd
