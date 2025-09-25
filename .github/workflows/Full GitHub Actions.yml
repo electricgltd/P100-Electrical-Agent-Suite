@@ -102,7 +102,7 @@ jobs:
       # 6. Upload exported solution
       - name: Upload Exported Solution
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: DesignAndCosting-solution
           path: DesignAndCosting.zip
@@ -110,7 +110,7 @@ jobs:
       # 7. Upload Solution Checker report
       - name: Upload Solution Checker Results
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: solution-checker-report
           path: checker-results
