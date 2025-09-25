@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  mcp:
+    build:
+      context: ..
+      dockerfile: mcp/Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - MCP_DEV_TOKEN=dev-token
+    restart: unless-stopped
