@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "p100-electrical-agent-suite"
+version = "0.0.0"
+description = "P100 Electrical Agent Suite — collection of Copilot agents and tools for electrical projects"
+readme = "README.md"
+authors = [ { name = "electricgltd" } ]
+license = "MIT"
+requires-python = ">=3.8"
+keywords = ["copilot", "agent", "electrical", "p100"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/electricgltd/P100-Electrical-Agent-Suite"
+Repository = "https://github.com/electricgltd/P100-Electrical-Agent-Suite"
+
+[tool.setuptools.packages.find]
+where = ["github_app"]
+include = ["github_app*"]
