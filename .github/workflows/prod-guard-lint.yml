@@ -1,0 +1,36 @@
+name: CI • Prod guard lint
+
+on:
+  push:
+    paths:
+      - '.github/workflows/**'
+      - '.github/actions/**'
+  workflow_dispatch: {}
+
+jobs:
+  lint-for-prod-imports:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Find workflows that import to Prod without opt-in
+        shell: pwsh
+        run: |
+          $errors = @()
+          $files = Get-ChildItem -Path .github/workflows -Filter *.yml -Recurse | Select-Object -ExpandProperty FullName
+          foreach ($f in $files) {
+            $text = Get-Content $f -Raw
+            if ($text -match 'microsoft/powerplatform-actions/import-solution@') {
+              if ($text -notmatch 'allow_prod_import:\s*\'?true\'?' ) {
+                $errors += "Found import-solution usage in $f without allow_prod_import opt-in"
+              }
+            }
+          }
+
+          if ($errors.Count -gt 0) {
+            Write-Host "PROD GUARD LINT FAILED:`n$($errors -join "`n")"
+            exit 1
+          }
+
+          Write-Host 'Prod guard lint passed.'
