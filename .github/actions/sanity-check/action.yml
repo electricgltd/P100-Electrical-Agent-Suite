@@ -36,7 +36,7 @@ runs:
         }
 
         if ("${{ inputs.pp_dev_url }}" -and "${{ inputs.pp_test_url }}" -and "${{ inputs.pp_dev_url }}" -eq "${{ inputs.pp_test_url }}") {
-          Write-Host 'PP_DEV_URL and PP_TEST_URL are identical. Failing to avoid accidental cross-environment operations.'; exit 1
+          Write-Host 'Warning: PP_DEV_URL and PP_TEST_URL are identical. This is allowed for single-environment setups; workflows will target the configured environment.'
         }
 
         Write-Host 'Sanity check passed.'
