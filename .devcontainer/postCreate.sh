@@ -57,6 +57,34 @@ else
   fi
 fi
 
+# Install Python 3.11 if not present (idempotent) on Debian/Ubuntu-based images
+if command -v python3.11 >/dev/null 2>&1; then
+  echo "python3.11 already present: $(python3.11 --version)"
+else
+  echo "python3.11 not found. Attempting apt-based install of Python 3.11 (idempotent)."
+  if command -v apt-get >/dev/null 2>&1; then
+    echo "Detected apt-get. Installing python3.11 and venv support..."
+    set +e
+    sudo apt-get update -y || true
+    sudo apt-get install -y software-properties-common || true
+    # On some images python3.11 is available directly; try install
+    sudo apt-get install -y python3.11 python3.11-venv python3.11-distutils || true
+    # Ensure pip for python3.11 exists
+    if ! command -v python3.11 >/dev/null 2>&1; then
+      echo "python3.11 still not found after apt install; skipping pip setup."
+    else
+      if ! python3.11 -m pip --version >/dev/null 2>&1; then
+        echo "Installing pip for python3.11 via get-pip.py"
+        curl -sS https://bootstrap.pypa.io/get-pip.py -o /tmp/get-pip.py || true
+        sudo python3.11 /tmp/get-pip.py || true
+      fi
+    fi
+    set -e
+  else
+    echo "No apt-get detected; skipping automatic python3.11 install. You can install Python manually if needed."
+  fi
+fi
+
 
 echo "Post-create tasks complete. Next steps:"
 echo " - Open a terminal in the Codespace (or container) and run:"
