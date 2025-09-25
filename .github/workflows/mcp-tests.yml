@@ -26,5 +26,7 @@ jobs:
         # Ensure the repository root is on PYTHONPATH so `mcp` imports reliably
         env:
           PYTHONPATH: ${{ github.workspace }}
+          # Allow the MCP dev server to accept the default 'dev-token' used by tests
+          MCP_DEV_ALLOW_INSECURE: 'true'
         run: |
           pytest -q
