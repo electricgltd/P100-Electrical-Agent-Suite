@@ -11,6 +11,15 @@ permissions:
   pull-requests: write
 
 jobs:
+  smoke-dispatch:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Confirm manual dispatch is working
+        run: |
+          echo "Planning Phase Workflow loaded via workflow_dispatch on ref: $GITHUB_REF"
+          echo "This is a smoke test job that runs only on manual dispatch."
+
   handle-planning-phase:
     runs-on: ubuntu-latest
     if: github.event_name == 'issues' && contains(github.event.issue.labels.*.name, 'Planning')
