@@ -1,0 +1,25 @@
+name: Feature request (Pack-aligned)
+description: One clear problem per issue; include AC and DoD for PR mapping.
+title: ""feat: <concise-title>""
+labels: [""feature""]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem statement
+      description: One clear problem to solve.
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria (AC-1, AC-2, …)
+      description: Concrete, testable outcomes. Copilot must map changes to these in the PR.
+  - type: textarea
+    id: dod
+    attributes:
+      label: Definition of Done
+      description: Evidence, tests, observable behavior, doc updates.
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Constraints / guardrails
+      description: Allowed folders, dependency limits, performance/security constraints.
