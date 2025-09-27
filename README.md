@@ -9,6 +9,7 @@ Parent/child Copilot Studio agents for an NICEIC electrical contractor:
 - `/agents` – grounding files and agent docs (EA/PA/DCA)
 - `/docs` – orchestration notes, templates
 - `/flows` – Power Automate flow definitions/docs
+- `/grounding-files` – Copilot Space context pack and operational documentation
 - `/solutions` – unpacked Dataverse solution source
 - `/scripts` – ALM automation (pack/unpack)
 - `/env` – WinGet configuration and local-only samples
