@@ -1,7 +1,7 @@
 name: Planning Phase (Parent Issue)
 description: Create a parent planning issue that generates actions and creates branches
 title: "[Planning] "
-labels: ["Planning", "agent:PA"]
+labels: ["Planning", "Agent: PA"]
 projects: ["electricgltd/2"]
 body:
   - type: markdown
@@ -51,26 +51,18 @@ body:
       label: Areas Involved
       description: Select all areas that this planning phase relates to
       options:
-        - label: Power Automate
-          value: area:Power Automate
-        - label: Cross Agent Orchestration  
-          value: area:Cross Agent Orchestration
-        - label: Grounding File
-          value: area:Grounding File
-        - label: Dataverse
-          value: area:Dataverse
-        - label: Emergency Lighting
-          value: area:Emergency Lighting
-        - label: Testing
-          value: area:Testing
-        - label: Fault Finding
-          value: area:Fault Finding
         - label: Car Charger
-          value: area:Car Charger
-        - label: Install
-          value: area:Install
+          value: Car Charger
         - label: EICR
-          value: area:EICR
+          value: EICR
+        - label: Emergency Lighting
+          value: Emergency Lighting
+        - label: Fault Finding
+          value: Fault Finding
+        - label: Install
+          value: Install
+        - label: Testing
+          value: Testing
           
   - type: input
     id: target-date
