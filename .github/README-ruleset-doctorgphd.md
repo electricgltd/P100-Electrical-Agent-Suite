@@ -93,3 +93,5 @@ DoD / Acceptance mapping:
 - Leaves enforcement OFF (non-blocking onboarding)
 
 Please open the Draft PR and run the onboarding workflow so the check contexts become selectable in Settings → Rulesets → DoctorGPhD.
+ 
+_Onboarding PR prepared by automation on 2025-09-27._
