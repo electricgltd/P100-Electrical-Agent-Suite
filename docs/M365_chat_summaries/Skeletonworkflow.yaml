@@ -1,0 +1,30 @@
+name: Solution Checker
+on:
+  pull_request: { branches: [ main ] }
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  check:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: microsoft/powerplatform-actions/actions-install@v1
+      - name: Authenticate
+        shell: bash
+        env:
+          ENV_URL: ${{ secrets.PAC_ENV_URL }}
+          TENANT_ID: ${{ secrets.PAC_TENANT_ID }}
+          APP_ID: ${{ secrets.PAC_CLIENT_ID }}
+          APP_SECRET: ${{ secrets.PAC_CLIENT_SECRET }}
+        run: |
+          pac auth create --url "$ENV_URL" --tenant "$TENANT_ID" --clientid "$APP_ID" --clientsecret "$APP_SECRET"
+          pac org who
+      - name: Solution Checker
+        uses: microsoft/powerplatform-actions/actions-check-solution@v1
+        with:
+          solutionInputFile: solutions/DesignAndCosting/DesignAndCosting.zip
+          failOn: High
