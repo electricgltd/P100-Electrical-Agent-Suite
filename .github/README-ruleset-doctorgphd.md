@@ -6,7 +6,7 @@ Add stable check contexts so they appear in the Ruleset UI and can be selected.
 Patch the DoctorGPhD ruleset programmatically to include the new contexts while keeping enforcement unchanged (onboard non-blocking).
 
 Summary of approach
-1) Add the workflow file (.github/workflows/onboard-status-checks.yml) and open a Draft PR against main OR run it on an existing PR so the check contexts are created.
+1) Add the workflow file (.github/workflows/onboard-status-checks.yml) and open a Draft PR against main (or run it on an existing PR) so the check contexts are created.
 2) Once the workflow run is visible on the PR or commit, the check names will be selectable in Settings → Rulesets → DoctorGPhD.
 3) If you want to perform the ruleset update programmatically, use the safe read-modify-write pattern below: read the existing ruleset JSON, append the contexts (unique), then PATCH the ruleset back. This ensures we do not accidentally change enforcement settings. Leave the "Require status checks to pass before merging" toggle OFF in the UI (non-blocking) until you are ready to require success-only.
 
@@ -63,8 +63,7 @@ gh api \
 - Keep "Require status checks to pass before merging" OFF for onboarding (non-blocking).
 
 Step D — When ready to make checks blocking (require success only)
-- In the Ruleset UI (recommended), turn ON "Require status checks to pass before merging".
-  This enforces that those contexts (when present on a PR) must complete with conclusion == success.
+- In the Ruleset UI (recommended), turn ON "Require status checks to pass before merging". This enforces that those contexts (when present on a PR) must complete with conclusion == success.
 
 Notes, Risks, & Rollback
 - The ruleset API requires appropriate permissions (repo admin / ruleset editor). If you get 403, run the commands as a user with the necessary role.
@@ -78,17 +77,17 @@ Acceptance Criteria (mapped)
 
 If you want me to
 - Create the branch and open the Draft PR that will trigger the workflow, say "Please open the draft PR" and I will prepare the branch name and PR body (I will not push without your go‑ahead). Otherwise run:
-  git checkout -b feature/ruleset-onboard-checks
-  git add .github/workflows/onboard-status-checks.yml .github/README-ruleset-doctorgphd.md
-  git commit -m "chore(ci): add onboarding status-checks workflow for DoctorGPhD"
-  git push --set-upstream origin feature/ruleset-onboard-checks
-  gh pr create --title "chore(ci): onboarding checks for DoctorGPhD" --body "Add noop workflow to emit stable check contexts for DoctorGPhD onboarding. Onboard non-blocking first." --draft
 
-Questions
-- None; user granted permission to open Draft PR.
+git checkout -b feature/ruleset-onboard-checks
+git add .github/workflows/onboard-status-checks.yml .github/README-ruleset-doctorgphd.md
+git commit -m "chore(ci): add onboarding status-checks workflow for DoctorGPhD"
+git push --set-upstream origin feature/ruleset-onboard-checks
+gh pr create --title "chore(ci): onboarding checks for DoctorGPhD" --body "Add noop workflow to emit stable check contexts for DoctorGPhD onboarding. Onboard non-blocking first." --draft
 
 DoD / Acceptance mapping (short):
 - One commit on feature/ruleset-onboard-checks (Conventional Commit)
 - Files added under .github only (allowed)
 - Workflow runs on pull_request producing stable job names (makes contexts selectable)
 - README documents safe programmatic onboarding (non-blocking)
+
+Please open the Draft PR and run the onboarding workflow so the check contexts become selectable in Settings → Rulesets → DoctorGPhD.

@@ -1,0 +1,71 @@
+name: PR • Onboard Status Checks (emit stable contexts)
+
+on:
+  pull_request:
+    branches: [ main ]
+
+concurrency:
+  group: onboard-status-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  status_completed:
+    name: "status: completed"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: No-op (produce check)
+        run: echo "status completed - noop"
+
+  status_expected:
+    name: "status: expected"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: No-op (produce check)
+        run: echo "status expected - noop"
+
+  status_pending:
+    name: "status: pending"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: No-op (produce check)
+        run: echo "status pending - noop"
+
+  status_queued:
+    name: "status: queued"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: No-op (produce check)
+        run: echo "status queued - noop"
+
+  status_waiting:
+    name: "status: waiting"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: No-op (produce check)
+        run: echo "status waiting - noop"
+
+  evidence:
+    name: "onboarding: evidence"
+    runs-on: ubuntu-latest
+    needs: [status_completed, status_expected, status_pending, status_queued, status_waiting]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Emit evidence file
+        run: |
+          echo "Onboarding checks run at $(date --utc)" > onboard-evidence.txt
+      - name: Upload evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: onboard-evidence
+          path: onboard-evidence.txt

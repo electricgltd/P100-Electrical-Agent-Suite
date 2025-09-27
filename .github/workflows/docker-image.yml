@@ -1,0 +1,55 @@
+name: Build and smoke-test MCP image
+
+on:
+  pull_request:
+    paths:
+      - 'mcp/**'
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU (for multi-arch cache compatibility)
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build mcp image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: mcp/Dockerfile
+          load: true
+          tags: p100-mcp:ci
+
+      - name: Run container and wait for startup
+        run: |
+          docker run -d --name p100-mcp-ci -p 8080:8080 p100-mcp:ci
+          for i in {1..15}; do
+            sleep 1
+            if curl -sSf http://127.0.0.1:8080/health >/dev/null 2>&1; then
+              echo 'health ok'
+              exit 0
+            fi
+          done
+          docker logs p100-mcp-ci || true
+          docker rm -f p100-mcp-ci || true
+          echo 'Failed to get healthy response from container' >&2
+          exit 1
+
+      - name: Stop and remove container
+        if: always()
+        run: |
+          docker rm -f p100-mcp-ci || true
+
+      - name: Run pytest inside built image
+        # This runs tests in the same environment the app will run in
+        run: |
+          docker run --rm p100-mcp:ci /bin/sh -c "python -m pip install -r /app/mcp/requirements.txt && pytest -q /app/mcp/tests"
