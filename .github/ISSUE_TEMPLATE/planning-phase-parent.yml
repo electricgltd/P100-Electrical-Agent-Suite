@@ -1,0 +1,123 @@
+name: Planning Phase (Parent Issue)
+description: Create a parent planning issue that generates actions and creates branches
+title: "[Planning] "
+labels: ["Planning", "agent:PA"]
+projects: ["electricgltd/2"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Planning Phase Parent Issue
+        
+        This template creates a parent-level planning issue that triggers workflow actions
+        and branch creation based on label combinations.
+        
+  - type: input
+    id: planning-scope
+    attributes:
+      label: Planning Scope
+      description: Brief description of what this planning phase covers
+      placeholder: "e.g., EICR testing schedule for Q1 2024"
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: Select the priority level for this planning phase
+      options:
+        - Critical
+        - Important
+        - Non-Critical
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: agent
+    attributes:
+      label: Responsible Agent
+      description: Select the primary agent responsible for this planning phase
+      options:
+        - "Agent: PA (Planning Agent)"
+        - "Agent: EA (Electrical Agent)"
+        - "Agent: DCA (Design & Costing Agent)"
+    validations:
+      required: true
+      
+  - type: checkboxes
+    id: areas
+    attributes:
+      label: Areas Involved
+      description: Select all areas that this planning phase relates to
+      options:
+        - label: Power Automate
+          value: area:Power Automate
+        - label: Cross Agent Orchestration  
+          value: area:Cross Agent Orchestration
+        - label: Grounding File
+          value: area:Grounding File
+        - label: Dataverse
+          value: area:Dataverse
+        - label: Emergency Lighting
+          value: area:Emergency Lighting
+        - label: Testing
+          value: area:Testing
+        - label: Fault Finding
+          value: area:Fault Finding
+        - label: Car Charger
+          value: area:Car Charger
+        - label: Install
+          value: area:Install
+        - label: EICR
+          value: area:EICR
+          
+  - type: input
+    id: target-date
+    attributes:
+      label: Target Completion Date
+      description: When should this planning phase be completed?
+      placeholder: "YYYY-MM-DD"
+    validations:
+      required: false
+      
+  - type: input
+    id: estimate
+    attributes:
+      label: Estimated Hours
+      description: How many hours is this planning phase expected to take?
+      placeholder: "e.g., 8"
+    validations:
+      required: false
+      
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: What needs to be completed for this planning phase to be considered done?
+      placeholder: |
+        - [ ] Sub-issues created and assigned
+        - [ ] Workflows configured and tested
+        - [ ] Documentation updated
+        - [ ] Stakeholders notified
+    validations:
+      required: true
+      
+  - type: textarea
+    id: linked-documents
+    attributes:
+      label: Linked Documents (OneDrive)
+      description: Links to OneDrive documents related to this planning phase
+      placeholder: |
+        - [Planning Document](OneDrive-link-here)
+        - [Requirements Spec](OneDrive-link-here)
+    validations:
+      required: false
+      
+  - type: textarea
+    id: additional-notes
+    attributes:
+      label: Additional Notes
+      description: Any additional context or information for this planning phase
+    validations:
+      required: false
