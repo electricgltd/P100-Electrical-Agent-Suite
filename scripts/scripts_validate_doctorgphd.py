@@ -21,6 +21,7 @@ import sys
 import re
 from pathlib import Path
 import json
+import argparse
 
 try:
     import yaml
@@ -32,6 +33,28 @@ ROOT = Path('.')
 PATTERN = ["agents/**/rules/DoctorGPhD/*.yml",
            "agents/**/rules/DoctorGPhD/*.yaml",
            "agents/**/rules/DoctorGPhD/*.json"]
+
+
+def resolve_input_paths(inputs):
+    """Resolve a list of input arguments into Path objects.
+
+    Each input may be:
+      - an explicit file path
+      - a glob pattern (relative to repo root)
+    If inputs is empty/None, the caller should fall back to default PATTERN.
+    """
+    files = []
+    if not inputs:
+        return files
+    for inp in inputs:
+        p = Path(inp)
+        if p.exists() and p.is_file():
+            files.append(p)
+            continue
+        # Try glob relative to repo root
+        files.extend([pp for pp in ROOT.glob(inp)])
+    # de-duplicate and sort
+    return sorted(set(files))
 
 def find_files():
     files = []
@@ -85,27 +108,36 @@ def validate_rule(rule, src):
     else:
         if not RULE_ID_RE.match(rid):
             errors.append(f"invalid 'id' value: '{rid}' (allowed: A-Z a-z 0-9 _ -)")
-    name = rule.get('name')
+    # Accept either a 'name' or a 'description'/'title' as the human label
+    name = rule.get('name') or rule.get('title') or rule.get('description')
     if not name or not isinstance(name, str) or not name.strip():
-        errors.append("missing or empty 'name' (string required)")
+        errors.append("missing or empty 'name'/'description' (string required)")
     cond = rule.get('conditions') or rule.get('condition')
     if cond is None:
         errors.append("missing 'conditions' (list or mapping expected)")
     else:
         if not isinstance(cond, (list, dict)):
             errors.append("'conditions' must be a list or mapping")
+    # 'actions' are optional in ruleset-style rules; if present validate type
     actions = rule.get('actions')
-    if actions is None:
-        errors.append("missing 'actions' (list or mapping expected)")
-    else:
+    if actions is not None:
         if not isinstance(actions, (list, dict)):
-            errors.append("'actions' must be a list or mapping")
+            errors.append("'actions' must be a list or mapping when present")
     return errors
 
 def main():
-    files = find_files()
+    # simple CLI: allow passing paths/globs to validate specific files
+    parser = argparse.ArgumentParser(description="Validate DoctorGPhD rules files")
+    parser.add_argument('paths', nargs='*', help='Optional file path(s) or glob(s) to validate')
+    args = parser.parse_args()
+
+    files = []
+    if args.paths:
+        files = resolve_input_paths(args.paths)
+    else:
+        files = find_files()
     if not files:
-        print("No DoctorGPhD rule files found under agents/**/rules/DoctorGPhD/ — nothing to validate.")
+        print("No DoctorGPhD rule files found — nothing to validate.")
         # Per safety, return 0 to not block CI when ruleset not present
         # but caller may treat absence differently. Use 0 for now.
         return 0
@@ -122,7 +154,14 @@ def main():
 
         # Normalize to list of rule dicts
         rules = []
-        if isinstance(obj, list):
+        # If the document is a mapping containing 'rules' or 'ruleset.rules', use that
+        if isinstance(obj, dict) and ('rules' in obj or (obj.get('ruleset') and isinstance(obj.get('ruleset'), dict) and 'rules' in obj.get('ruleset'))):
+            container = obj.get('rules') or obj.get('ruleset', {}).get('rules')
+            if isinstance(container, list):
+                for item in container:
+                    if isinstance(item, dict):
+                        rules.append(item)
+        elif isinstance(obj, list):
             for item in obj:
                 if isinstance(item, dict):
                     rules.append(item)
