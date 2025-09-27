@@ -1,0 +1,30 @@
+ruleset:
+  name: DoctorGPhD Default Ruleset
+  enabled: true
+  description: >
+    This ruleset enables DoctorGPhD validation and enforces project standards.
+  rules:
+    - id: naming-convention
+      description: All agent names must start with 'DoctorGPhD'
+      severity: error
+      conditions:
+        - field: name
+          operator: matches
+          value: "^DoctorGPhD"
+    - id: license-check
+      description: All files must include a license header
+      severity: warning
+      conditions:
+        - field: file_content
+          operator: contains
+          value: "Licensed under"
+    - id: no-todo-comments
+      description: No TODO comments should be present in committed code
+      severity: error
+      conditions:
+        - field: file_content
+          operator: not_contains
+          value: "TODO"
+  metadata:
+    version: 1.0
+    author: electricgltd
