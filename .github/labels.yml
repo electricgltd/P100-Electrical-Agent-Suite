@@ -109,3 +109,21 @@ labels:
 - name: Testing
   color: 9C27B0
   description: Areas that Have processes associated with them
+- name: Planning
+  color: 4C1D95
+  description: Planning phase labels for workflow generation
+- name: 'agent: allowed'
+  color: 059669
+  description: Opt-in label to permit automated agent action on this issue
+- name: 'agent: generated'
+  color: 0369A1
+  description: Applied by workflow to PRs created by automated agents
+- name: 'agent: approved'  
+  color: 16A34A
+  description: Applied by human reviewer after inspecting agent-generated work
+- name: 'agent: denied'
+  color: DC2626
+  description: Blocks automated agent action for this issue
+- name: 'sub-issue'
+  color: 7C3AED
+  description: Indicates this is a sub-issue that should be linked to a parent

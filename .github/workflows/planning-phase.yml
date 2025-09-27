@@ -1,0 +1,151 @@
+name: Planning Phase Workflow
+
+on:
+  issues:
+    types: [opened, labeled, unlabeled]
+
+permissions:
+  issues: write
+  contents: write
+  pull-requests: write
+
+jobs:
+  handle-planning-phase:
+    runs-on: ubuntu-latest
+    if: contains(github.event.issue.labels.*.name, 'Planning')
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Handle planning phase issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            console.log('Planning phase issue detected:', context.issue.number);
+            
+            // Add to Project #2 if not already there
+            const projectQuery = `
+              query {
+                repository(owner: "${context.repo.owner}", name: "${context.repo.repo}") {
+                  issue(number: ${context.issue.number}) {
+                    projectItems(first: 10) {
+                      nodes {
+                        project {
+                          number
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            `;
+            
+            const result = await github.graphql(projectQuery);
+            const isInProject2 = result.repository.issue.projectItems.nodes.some(
+              item => item.project.number === 2
+            );
+            
+            if (!isInProject2) {
+              console.log('Adding issue to Project #2');
+              // Note: This would need additional GraphQL mutation to add to project
+              // For now, just log the action needed
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: '🎯 **Planning Phase Detected**\n\nThis issue has been identified as a planning phase issue. Please ensure it\'s added to Project #2 for tracking.\n\n**Next Steps:**\n- Review planning scope and acceptance criteria\n- Create sub-issues as needed\n- Set target completion date and estimates'
+              });
+            }
+            
+            // Create a branch for this planning phase if it has both Planning and agent:PA labels
+            const hasAgentPA = context.payload.issue.labels.some(label => label.name === 'agent:PA');
+            if (hasAgentPA && context.payload.action === 'labeled') {
+              const branchName = `planning/issue-${context.issue.number}-${context.payload.issue.title.toLowerCase().replace(/[^a-z0-9]/g, '-').substring(0, 30)}`;
+              console.log('Would create branch:', branchName);
+              
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: '🚀 **Planning Branch Ready**\n\nBranch will be created: `' + branchName + '`\n\nThis branch can be used for planning-related changes and sub-issue coordination.'
+              });
+            }
+
+  handle-agent-sub-issue:
+    runs-on: ubuntu-latest
+    if: "contains(github.event.issue.labels.*.name, 'agent: allowed') && contains(github.event.issue.labels.*.name, 'sub-issue')"
+    steps:
+      - name: Checkout repository  
+        uses: actions/checkout@v4
+        
+      - name: Process agent-allowed sub-issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            console.log('Agent-allowed sub-issue detected:', context.issue.number);
+            
+            // Validate that the issue has proper scope defined
+            const issueBody = context.payload.issue.body || '';
+            const hasScopeSection = issueBody.includes('Scope / Files agent may modify') || 
+                                   issueBody.includes('agent may modify');
+            
+            if (!hasScopeSection) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: '⚠️ **Missing Scope Definition**\n\nThis sub-issue is marked as `agent: allowed` but does not have a clear scope definition. Please update the issue body to include:\n\n- List of files/paths the agent may modify\n- Clear acceptance criteria\n- Link to parent issue\n\nOnce scope is defined, remove and re-add the `agent: allowed` label to trigger the workflow.'
+              });
+              return;
+            }
+            
+            // Create draft PR for agent work
+            const branchName = `agent/${context.issue.number}-${context.payload.issue.title.toLowerCase().replace(/[^a-z0-9]/g, '-').substring(0, 30)}`;
+            
+            console.log('Agent sub-issue validated, would create branch:', branchName);
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: '🤖 **Agent Work Authorized**\n\nThis sub-issue has been approved for automated agent work.\n\n**Branch:** `' + branchName + '`\n\n**Next Steps:**\n1. Agent will analyze the scope and requirements\n2. Draft PR will be created with `agent: generated` label\n3. Human review required before merge\n\n**Safety Reminders:**\n- Agent is limited to the specified file scope\n- All commits will include `[agent-generated]` marker\n- PR must be manually approved before merge'
+            });
+
+  validate-agent-policy:
+    runs-on: ubuntu-latest
+    if: contains(github.event.issue.labels.*.name, 'sub-issue')
+    steps:
+      - name: Check agent policy compliance
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const labels = context.payload.issue.labels.map(label => label.name);
+            const hasAgentAllowed = labels.includes('agent: allowed');
+            const hasAgentDenied = labels.includes('agent: denied');
+            
+            // Prevent conflicting agent labels
+            if (hasAgentAllowed && hasAgentDenied) {
+              await github.rest.issues.removeLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                name: 'agent: allowed'
+              });
+              
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: '🚫 **Conflicting Agent Labels**\n\nBoth `agent: allowed` and `agent: denied` were present. Removed `agent: allowed` to respect the deny policy.\n\nIf you want to allow agent work, please remove `agent: denied` first.'
+              });
+            }
+            
+            // Remind about default policy
+            if (!hasAgentAllowed && !hasAgentDenied && context.payload.action === 'opened') {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: '📋 **Agent Policy Reminder**\n\nBy default, agent runs are **disabled** for sub-issues.\n\nTo allow automated agent work:\n- Add the `agent: allowed` label\n- OR manually trigger the agent workflow\n\nTo explicitly block agent work:\n- Add the `agent: denied` label'
+              });
+            }
