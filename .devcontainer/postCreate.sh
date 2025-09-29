@@ -18,8 +18,15 @@ else
       echo "dotnet tool install failed; attempting to update and retry"
       dotnet tool update --global Microsoft.PowerApps.CLI.Tool || true
     }
-    # Ensure ~/.dotnet/tools is on PATH for the remainder of the script and instruct the user
-    export PATH="$HOME/.dotnet/tools:$PATH"
+    # Ensure ~/.dotnet/tools is on PATH for the remainder of the script and persist it for future shells
+    DOTNET_TOOLS="$HOME/.dotnet/tools"
+    export PATH="$DOTNET_TOOLS:$PATH"
+    # Persist the dotnet tools path for interactive shells (idempotent)
+    SHELL_PROFILE="$HOME/.profile"
+    if ! grep -qxF "# add dotnet tools to PATH" "$SHELL_PROFILE" 2>/dev/null; then
+      echo "# add dotnet tools to PATH" >> "$SHELL_PROFILE"
+      echo "export PATH=\"$DOTNET_TOOLS:\$PATH\"" >> "$SHELL_PROFILE"
+    fi
   else
     echo "dotnet not found in the container image. Please install dotnet or use an image with dotnet preinstalled."
     exit 1
