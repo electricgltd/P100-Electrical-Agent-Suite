@@ -25,7 +25,6 @@ jobs:
             const number = pr.number;
             const title  = (pr.title || '').trim();
             const body   = (pr.body  || '').trim();
-
             if (!title) {
               core.setFailed('PR title must not be empty.');
               return;
@@ -34,15 +33,12 @@ jobs:
               core.setFailed('PR body must be at least 20 characters with meaningful detail.');
               return;
             }
-
             const labelsRes = await github.rest.issues.listLabelsOnIssue({
               owner, repo, issue_number: number, per_page: 100
             });
             const labels = (labelsRes.data || []).map(l => l.name);
-
             if (!labels || labels.length === 0) {
               core.setFailed('At least one label is required on the PR.');
               return;
             }
-
             core.info(`PR #${number} metadata OK. Title length=${title.length}, Body length=${body.length}, Labels=[${labels.join(', ')}]`);

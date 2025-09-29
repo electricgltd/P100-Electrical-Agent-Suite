@@ -20,7 +20,7 @@ jobs:
               core.setFailed('This workflow only runs on pull_request events.');
               return;
             }
-            const allowed = ['electricgltd'];
+            const allowed = ['electricgltd']; // may be expanded after PR creation
             const author = pr.user?.login || '';
             core.info(`PR #${pr.number} author: ${author}`);
             if (!allowed.includes(author)) {
