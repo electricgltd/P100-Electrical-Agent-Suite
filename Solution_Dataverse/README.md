@@ -1,2 +1,2 @@
 # Read me
-To be used to save the dataverse solution
+To be used to save the Dataverse solution
