@@ -20,3 +20,13 @@ Parent/child Copilot Studio agents for an NICEIC electrical contractor:
 
 If you prefer a powerful desktop GUI for repository operations, GitKraken is a good option — it provides an intuitive commit graph, interactive rebases, conflict resolution UI, and easy remote integrations. For in-container development and PR workflows we recommend using VS Code with the GitLens and GitHub Pull Requests extensions (both are included in the devcontainer configuration).
 
+
+## P100 – Repo Home
+
+- **Solution (apps & ALM):** ./solution  
+- **Knowledge (agent grounding):** ./knowledge  
+
+**Working rules (simple):**
+- One repo, two sections.  
+- No background automation; we add a *manual* publish later if needed.  
+- Start your day here.
