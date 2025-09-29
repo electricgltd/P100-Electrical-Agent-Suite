@@ -1,0 +1,48 @@
+name: PR Guard — Metadata
+on:
+  pull_request:
+    types: [opened, reopened, edited, synchronize, ready_for_review]
+jobs:
+  metadata:
+    name: Metadata
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+      issues: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate PR title/body/labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const pr = context.payload.pull_request;
+            if (!pr) {
+              core.setFailed('This workflow only runs on pull_request events.');
+              return;
+            }
+            const number = pr.number;
+            const title  = (pr.title || '').trim();
+            const body   = (pr.body  || '').trim();
+
+            if (!title) {
+              core.setFailed('PR title must not be empty.');
+              return;
+            }
+            if (body.length < 20) {
+              core.setFailed('PR body must be at least 20 characters with meaningful detail.');
+              return;
+            }
+
+            const labelsRes = await github.rest.issues.listLabelsOnIssue({
+              owner, repo, issue_number: number, per_page: 100
+            });
+            const labels = (labelsRes.data || []).map(l => l.name);
+
+            if (!labels || labels.length === 0) {
+              core.setFailed('At least one label is required on the PR.');
+              return;
+            }
+
+            core.info(`PR #${number} metadata OK. Title length=${title.length}, Body length=${body.length}, Labels=[${labels.join(', ')}]`);

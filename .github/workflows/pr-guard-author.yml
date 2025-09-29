@@ -1,0 +1,30 @@
+name: PR Guard — Author
+on:
+  pull_request:
+    types: [opened, reopened, edited, synchronize, ready_for_review]
+jobs:
+  author:
+    name: Author
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce PR author
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            if (!pr) {
+              core.setFailed('This workflow only runs on pull_request events.');
+              return;
+            }
+            const allowed = ['electricgltd'];
+            const author = pr.user?.login || '';
+            core.info(`PR #${pr.number} author: ${author}`);
+            if (!allowed.includes(author)) {
+              core.setFailed(`PR author '${author}' is not allowed. Allowed: ${allowed.join(', ')}`);
+            } else {
+              core.info('Author check passed.');
+            }
