@@ -1,0 +1,116 @@
+{
+  "entity": "p100_variant",
+  "displayName": "Variant",
+  "description": "Fields derived from the provided Variant specification table.",
+  "fields": [
+    {
+      "logicalName": "p100_name",
+      "displayName": "Variant Name",
+      "type": "String",
+      "required": true,
+      "searchable": true,
+      "maxLength": 200,
+      "notes": "Primary Name field"
+    },
+    {
+      "logicalName": "p100_description",
+      "displayName": "Variant Description",
+      "type": "String",
+      "format": "MultiLine",
+      "maxLength": 2000,
+      "notes": "Long description"
+    },
+    {
+      "logicalName": "p100_scope",
+      "displayName": "Scope",
+      "type": "Choice",
+      "required": true,
+      "options": [
+        { "value": 100000000, "label": "Domestic" },
+        { "value": 100000001, "label": "Commercial" },
+        { "value": 100000002, "label": "Both" }
+      ],
+      "notes": "Filterable option set"
+    },
+    {
+      "logicalName": "p100_appliesto",
+      "displayName": "Applies To",
+      "type": "Choice",
+      "required": true,
+      "options": [
+        { "value": 100000000, "label": "Task Unit" },
+        { "value": 100000001, "label": "Material Task Unit" },
+        { "value": 100000002, "label": "Material" },
+        { "value": 100000003, "label": "Assembly Component Task Units" },
+        { "value": 100000004, "label": "Assembly Unit Materials" },
+        { "value": 100000005, "label": "End point or circuit" }
+      ],
+      "notes": "Effect Target (filterable)"
+    },
+    {
+      "logicalName": "p100_valuetype",
+      "displayName": "Value Type",
+      "type": "Choice",
+      "options": [
+        { "value": 100000000, "label": "Integer" },
+        { "value": 100000001, "label": "Decimal" },
+        { "value": 100000002, "label": "Boolean" }
+      ],
+      "notes": "Controls expected data type for value fields"
+    },
+    {
+      "logicalName": "p100_uom",
+      "displayName": "UoM",
+      "type": "Lookup",
+      "target": "uom", 
+      "notes": "Lookup to Unit of Measure table. Use existing UoM table logical name (update target if different)"
+    },
+    {
+      "logicalName": "p100_condition_source_entity",
+      "displayName": "Condition Source Entity",
+      "type": "Choice",
+      "options": [
+        { "value": 100000000, "label": "Material" },
+        { "value": 100000001, "label": "MTU" },
+        { "value": 100000002, "label": "ACI Material" },
+        { "value": 100000003, "label": "Assembly Parameter" },
+        { "value": 100000004, "label": "Circuit" },
+        { "value": 100000005, "label": "Endpoint" }
+      ],
+      "notes": "Input Entity for conditions"
+    },
+    {
+      "logicalName": "p100_condition_source_attribute",
+      "displayName": "Condition Source Attribute",
+      "type": "String",
+      "maxLength": 200,
+      "notes": "Text - the attribute name on the source entity (same as variant name when used as token)"
+    },
+    {
+      "logicalName": "p100_condition_source_path",
+      "displayName": "Condition Source Path",
+      "type": "String",
+      "format": "Calculated",
+      "calculation": {
+        "behavior": "Calculated",
+        "formula": "Concat([p100_condition_source_entity], '.', [p100_condition_source_attribute])"
+      },
+      "notes": "Calculated Power Fx field that concatenates entity + '.' + attribute"
+    },
+    {
+      "logicalName": "p100_isactive",
+      "displayName": "Active",
+      "type": "Boolean",
+      "default": true,
+      "notes": "Toggle whether this variant is in use"
+    },
+    {
+      "logicalName": "p100_linenotes",
+      "displayName": "Line Notes",
+      "type": "String",
+      "format": "MultiLine",
+      "maxLength": 2000,
+      "notes": "Freeform multiline notes"
+    }
+  ]
+}
