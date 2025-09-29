@@ -19,6 +19,8 @@ jobs:
     env:
       DEV_URL: ${{ secrets.PP_DEV_URL }}
       TEST_URL: ${{ secrets.PP_TEST_URL }}
+      # set to 'true' to allow PP_DEV_URL and PP_TEST_URL to be identical (single-environment setups)
+      PP_ALLOW_SAME_ENV: ${{ secrets.PP_ALLOW_SAME_ENV }}
       SOLUTION_NAME: DesignAndCosting
 
     steps:
@@ -37,7 +39,11 @@ jobs:
             echo "PP_DEV_URL is empty. Failing."; exit 1
           fi
           if [ -n "$TEST_URL" ] && [ "$DEV_URL" = "$TEST_URL" ]; then
-            echo "PP_DEV_URL and PP_TEST_URL are identical. Failing to avoid cross-env confusion."; exit 1
+            if [ "${PP_ALLOW_SAME_ENV}" = "true" ]; then
+              echo "PP_DEV_URL and PP_TEST_URL are identical but PP_ALLOW_SAME_ENV=true; continuing for single-environment setup."
+            else
+              echo "PP_DEV_URL and PP_TEST_URL are identical. Failing to avoid cross-env confusion."; exit 1
+            fi
           fi
 
       - name: Sanity check (reusable)
