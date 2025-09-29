@@ -1,13 +1,10 @@
 name: Enforce PR author (only @electricgltd)
-
 on:
   pull_request_target:
     types: [opened, reopened]
-
 permissions:
   pull-requests: write
   issues: write
-
 jobs:
   guard:
     runs-on: ubuntu-latest
@@ -15,7 +12,7 @@ jobs:
       - uses: actions/github-script@v7
         with:
           script: |
-            const allowed = ['electricgltd']; // <- your GitHub username
+            const allowed = ['electricgltd'];
             const pr = context.payload.pull_request;
             const author = pr.user?.login || '';
             if (!allowed.includes(author)) {
