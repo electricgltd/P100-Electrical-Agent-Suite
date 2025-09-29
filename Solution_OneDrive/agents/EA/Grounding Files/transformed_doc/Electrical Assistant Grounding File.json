@@ -1,0 +1,519 @@
+[
+  {
+    "sid": "/copilot-agent-note",
+    "title": "Copilot Agent Note:",
+    "level": 3,
+    "children": [
+      {
+        "sid": "/1-planning-and-organisation",
+        "title": "1) Planning and Organisation",
+        "level": 4,
+        "parent": "/copilot-agent-note",
+        "children": []
+      },
+      {
+        "sid": "/2-adhd",
+        "title": "2) ADHD",
+        "level": 4,
+        "parent": "/copilot-agent-note",
+        "children": []
+      },
+      {
+        "sid": "/3-design-and-costing",
+        "title": "3) Design and Costing",
+        "level": 4,
+        "parent": "/copilot-agent-note",
+        "children": []
+      },
+      {
+        "sid": "/4-eicr-process",
+        "title": "4) EICR process",
+        "level": 4,
+        "parent": "/copilot-agent-note",
+        "children": [
+          {
+            "sid": "/a-pre-inspection-discussions",
+            "title": "a. Pre-inspection discussions",
+            "level": 5,
+            "parent": "/4-eicr-process",
+            "children": []
+          },
+          {
+            "sid": "/b-pre-inspection-areas-of-focus-and-sampling",
+            "title": "b. Pre-inspection areas of focus and sampling",
+            "level": 5,
+            "parent": "/4-eicr-process",
+            "children": []
+          },
+          {
+            "sid": "/c-pre-inspection-equipment-checks",
+            "title": "c. Pre-inspection equipment checks",
+            "level": 5,
+            "parent": "/4-eicr-process",
+            "children": []
+          },
+          {
+            "sid": "/d-inspection-approach",
+            "title": "d. Inspection approach",
+            "level": 5,
+            "parent": "/4-eicr-process",
+            "children": []
+          },
+          {
+            "sid": "/e-common-deviations-from-my-working-principles",
+            "title": "e. Common deviations from my working principles",
+            "level": 5,
+            "parent": "/4-eicr-process",
+            "children": []
+          },
+          {
+            "sid": "/f-coding-guidance",
+            "title": "f. Coding guidance",
+            "level": 5,
+            "parent": "/4-eicr-process",
+            "children": []
+          },
+          {
+            "sid": "/g-paperwork",
+            "title": "g. Paperwork",
+            "level": 5,
+            "parent": "/4-eicr-process",
+            "children": []
+          },
+          {
+            "sid": "/h-remedial-actions",
+            "title": "h. Remedial actions",
+            "level": 5,
+            "parent": "/4-eicr-process",
+            "children": []
+          },
+          {
+            "sid": "/i-guidance-note-4-contains-details-on-eicr-reporting-this-is-a-reference-document",
+            "title": "i. Guidance note 4 contains details on EICR reporting. This is a reference document.",
+            "level": 5,
+            "parent": "/4-eicr-process",
+            "children": []
+          }
+        ]
+      },
+      {
+        "sid": "/5-installation-process",
+        "title": "5) Installation process",
+        "level": 4,
+        "parent": "/copilot-agent-note",
+        "children": [
+          {
+            "sid": "/a-pre-install-discussion-of-work",
+            "title": "a. Pre-install discussion of work",
+            "level": 5,
+            "parent": "/5-installation-process",
+            "children": []
+          },
+          {
+            "sid": "/b-pre-install-requirement-for-paperwork-or-electrical-system-checks-and-testing",
+            "title": "b. Pre-install requirement for paperwork or electrical system checks and testing",
+            "level": 5,
+            "parent": "/5-installation-process",
+            "children": []
+          },
+          {
+            "sid": "/c-pre-install-ordering-of-materials",
+            "title": "c. Pre-install ordering of materials",
+            "level": 5,
+            "parent": "/5-installation-process",
+            "children": []
+          },
+          {
+            "sid": "/d-earthing-system",
+            "title": "d. Earthing system",
+            "level": 5,
+            "parent": "/5-installation-process",
+            "children": []
+          },
+          {
+            "sid": "/e-cable-routing",
+            "title": "e. Cable Routing",
+            "level": 5,
+            "parent": "/5-installation-process",
+            "children": []
+          },
+          {
+            "sid": "/f-1st-fix",
+            "title": "f. 1st Fix",
+            "level": 5,
+            "parent": "/5-installation-process",
+            "children": []
+          },
+          {
+            "sid": "/g-2nd-fix",
+            "title": "g. 2nd Fix",
+            "level": 5,
+            "parent": "/5-installation-process",
+            "children": []
+          },
+          {
+            "sid": "/h-testing",
+            "title": "h. Testing",
+            "level": 5,
+            "parent": "/5-installation-process",
+            "children": []
+          },
+          {
+            "sid": "/i-paperwork",
+            "title": "i. Paperwork",
+            "level": 5,
+            "parent": "/5-installation-process",
+            "children": []
+          },
+          {
+            "sid": "/j-analysis",
+            "title": "j. Analysis",
+            "level": 5,
+            "parent": "/5-installation-process",
+            "children": []
+          }
+        ]
+      },
+      {
+        "sid": "/6-testing",
+        "title": "6) Testing",
+        "level": 4,
+        "parent": "/copilot-agent-note",
+        "children": []
+      },
+      {
+        "sid": "/7-fault-finding",
+        "title": "7) Fault Finding",
+        "level": 4,
+        "parent": "/copilot-agent-note",
+        "children": []
+      },
+      {
+        "sid": "/8-emergency-lighting",
+        "title": "8) Emergency Lighting",
+        "level": 4,
+        "parent": "/copilot-agent-note",
+        "children": []
+      },
+      {
+        "sid": "/9-car-chargers",
+        "title": "9) Car Chargers",
+        "level": 4,
+        "parent": "/copilot-agent-note",
+        "children": []
+      }
+    ]
+  },
+  {
+    "sid": "/copilot-agent-note-1",
+    "title": "Copilot Agent Note:",
+    "level": 3,
+    "children": []
+  },
+  {
+    "sid": "/copilot-agent-note-2",
+    "title": "Copilot Agent Note:",
+    "level": 3,
+    "children": []
+  },
+  {
+    "sid": "/copilot-agent-note-3",
+    "title": "Copilot Agent Note:",
+    "level": 3,
+    "children": [
+      {
+        "sid": "/a-pre-inspection---discussions-typically-happen-at-the-first-point-of-contact-i-discuss-with-the-customer-what-the-purpose-of-the-report-is-and-develop-my-approach-based-on-their-requirements-then-i-will-walk-round-the-site-and-make-some-basic-notes-to-help-me-produce-the-quote-these-notes-will-include-the-number-of-boards-their-size-number-of-circuits-and-how-easily-the-system-is-accessible",
+        "title": "a) Pre-inspection - discussions typically happen at the first point of contact. I discuss with the customer what the purpose of the report is and develop my approach based on their requirements. Then I will walk round the site and make some basic notes to help me produce the quote. These notes will include the number of boards, their size, number of circuits and how easily the system is accessible.",
+        "level": 4,
+        "parent": "/copilot-agent-note-3",
+        "children": []
+      },
+      {
+        "sid": "/b-pre-inspection-areas-of-focus-and-sampling--once-the-client-has-accepted-the-quote-i-create-a-sampling-schedule-of-the-circuits-this-takes-guidance-note-3-into-account",
+        "title": "b) Pre-inspection areas of focus and sampling – Once the client has accepted the quote, I create a sampling schedule of the circuits. This takes guidance note 3 into account.",
+        "level": 4,
+        "parent": "/copilot-agent-note-3",
+        "children": []
+      },
+      {
+        "sid": "/c-pre-inspection-equipment-checks--i-need-to-make-sure-i-have-the-following-equipment-with-me-my-tester-r2-wandering-lead-all-3-step-ladders-my-surface-pro-and-my-hand-tools",
+        "title": "c) Pre-inspection equipment checks – I need to make sure I have the following equipment with me. My tester, r2 wandering lead, all 3 step ladders, my surface pro, and my hand tools.",
+        "level": 4,
+        "parent": "/copilot-agent-note-3",
+        "children": []
+      },
+      {
+        "sid": "/d-inspection-approach--i-walk-the-site-a-couple-of-times-to-see-if-anything-sticks-out-like-a-sore-thumb-while-doing-this-i-can-get-my-head-around-a-good-place-to-set-up-and-anything-else-i-need-to-consider-that-i-did-not-notice-last-visit-i-start-by-looking-at-the-earthing-system-if-possible-i-will-check-ze-and-then-check-the-bonding-then-ill-systematically-work-through-a-board-at-a-time-doing-the-testing-alongside-the-inspection-a-good-rule-of-thumb-is-90-inspection-to-10-testing",
+        "title": "d) Inspection approach – I walk the site a couple of times to see if anything sticks out like a sore thumb. While doing this I can get my head around a good place to set up and anything else I need to consider that I did not notice last visit. I start by looking at the earthing system. If possible, I will check Ze and then check the bonding. Then, I’ll systematically work through a board at a time doing the testing alongside the inspection. A good rule of thumb is 90% inspection to 10% testing.",
+        "level": 4,
+        "parent": "/copilot-agent-note-3",
+        "children": []
+      },
+      {
+        "sid": "/e-common-deviations-from-my-working-principles--this-often-depends-on-there-not-being-access-to-certain-areas-if-i-cant-do-certain-tests-or-gain-access-to-an-area-i-will-make-a-note-to-include-in-the-report-i-always-try-and-find-someone-on-site-that-understands-enough-about-the-reporting-to-discuss-things-with-this-is-not-always-the-person-ive-been-asked-to-do-the-report-by-i-can-often-miss-doing-insulation-resistance-tests-if-it-is-not-possible-to-unplug-everything",
+        "title": "e) Common deviations from my working principles – this often depends on there not being access to certain areas. If I can’t do certain tests or gain access to an area I will make a note to include in the report. I always try and find someone on site that understands enough about the reporting to discuss things with. This is not always the person I’ve been asked to do the report by. I can often miss doing insulation resistance tests if it is not possible to unplug everything.",
+        "level": 4,
+        "parent": "/copilot-agent-note-3",
+        "children": []
+      },
+      {
+        "sid": "/f-coding-guidance--ive-put-together-a-separate-file-of-coding-guidance-that-ill-collate-information-on-at-a-later-date-this-file-will-build-as-i-do-more-reports-using-this-structure",
+        "title": "f) Coding guidance – I’ve put together a separate file of coding guidance that I’ll collate information on at a later date. This file will build as I do more reports using this structure.",
+        "level": 4,
+        "parent": "/copilot-agent-note-3",
+        "children": []
+      },
+      {
+        "sid": "/g-paperwork--this-is-my-largest-area-for-improvement-it-currently-takes-me-far-too-long-to-do-the-reporting-paperwork-id-like-to-use-the-agent-to-help-cut-this-time-down-and-streamline-the-process-id-also-like-to-do-this-working-within-the-framework-of-cal-newports-system-of-working-i-will-detail-in-more-depth-how-i-use-both-planner-and-to-do-to-help-with-this-ive-created-certain-buckets-in-to-do-and-long-term-goals-and-quarterly-goals-to-further-support-this-in-planner",
+        "title": "g) Paperwork- this is my largest area for improvement. It currently takes me far too long to do the reporting paperwork. I’d like to use the agent to help cut this time down and streamline the process. I’d also like to do this working within the framework of Cal Newports system of working. I will detail in more depth how I use both Planner and To Do to help with this. I’ve created certain buckets in To Do and Long-Term Goals and Quarterly Goals to further support this in Planner.",
+        "level": 4,
+        "parent": "/copilot-agent-note-3",
+        "children": []
+      },
+      {
+        "sid": "/h-remedial-actions--at-times-i-get-sidetracked-into-completing-remedial-works-while-doing-the-eicr-this-is-not-the-way-to-do-it-the-report-needs-to-be-finished-and-written-up-before-i-move-on-to-completing-the-remedial-work",
+        "title": "h) Remedial Actions – at times I get sidetracked into completing remedial works while doing the EICR. This is not the way to do it. The report needs to be finished and written up before I move on to completing the remedial work.",
+        "level": 4,
+        "parent": "/copilot-agent-note-3",
+        "children": []
+      }
+    ]
+  },
+  {
+    "sid": "/copilot-agent-note-4",
+    "title": "Copilot Agent Note:",
+    "level": 3,
+    "children": [
+      {
+        "sid": "/a-pre-install-discussion-of-work-its-essential-to-have-a-robust-and-good-quality-costing-model-in-place-this-uses-the-information-gathered-in-this-discussion-and-is-also-flexible-to-deal-with-client-changes-and-tracks-them-against-the-original-costing-a-good-feel-for-the-figures-is-essential",
+        "title": "a) Pre-install discussion of work. It’s essential to have a robust and good-quality costing model in place. This uses the information gathered in this discussion and is also flexible to deal with client changes and tracks them against the original costing. A good feel for the figures is essential.",
+        "level": 4,
+        "parent": "/copilot-agent-note-4",
+        "children": []
+      },
+      {
+        "sid": "/b-pre-install-requirement-for-paperwork-or-electrical-system-checks-and-testing-do-an-eicr-it-if-the-paperwork-isnt-in-place-or-past-the-recommended-time-for-an-eicr",
+        "title": "b) Pre-install requirement for paperwork or electrical system checks and testing. Do an EICR it if the paperwork isn’t in place or past the recommended time for an EICR.",
+        "level": 4,
+        "parent": "/copilot-agent-note-4",
+        "children": []
+      },
+      {
+        "sid": "/c-pre-install-ordering-of-materials-this-will-be-automatically-be-run-by-the-design-and-costing-agent-otherwise-use-by-spreadsheet-in-the-meantime",
+        "title": "c) Pre-install ordering of materials. This will be automatically be run by the Design and Costing Agent. Otherwise, use by spreadsheet in the meantime.",
+        "level": 4,
+        "parent": "/copilot-agent-note-4",
+        "children": []
+      },
+      {
+        "sid": "/d-earthing-system-i-like-to-start-by-installing-the-main-protective-conductor-and-the-bonding-conductors",
+        "title": "d) Earthing system, I like to start by installing the main protective conductor and the bonding conductors.",
+        "level": 4,
+        "parent": "/copilot-agent-note-4",
+        "children": []
+      },
+      {
+        "sid": "/e-cable-routing-decide-where-the-main-runs-are-going-to-be-ideally-giving-access-across-the-whole-area-youre-working-in",
+        "title": "e) Cable routing, decide where the main runs are going to be. Ideally, giving access across the whole area you’re working in.",
+        "level": 4,
+        "parent": "/copilot-agent-note-4",
+        "children": []
+      },
+      {
+        "sid": "/f-1st-fix-you-can-very-rarely-pull-all-the-cables-in-at-once-but-it-is-best-to-do-as-many-as-possible-watching-out-for-burning-the-cables-on-bottlenecks-or-touch-points-the-first-fix-very-much-depends-on-what-areas-you-can-work-in-you-need-to-adapt-based-on-whats-available",
+        "title": "f) 1st Fix, you can very rarely pull all the cables in at once, but it is best to do as many as possible, watching out for burning the cables on bottlenecks or touch points. The first fix very much depends on what areas you can work in. You need to adapt based on what’s available.",
+        "level": 4,
+        "parent": "/copilot-agent-note-4",
+        "children": []
+      },
+      {
+        "sid": "/g-2nd-fix-once-the-other-trades-have-been-in-you-can-second-fix-the-wiring-system-concentration-is-vital-for-me-at-this-stage-i-can-easily-think-im-near-the-finish-line-and-lose-concentration-good-quality-connections-are-vital-and-will-show-up-in-the-testing-if-they-have-not-been-conducted-well",
+        "title": "g) 2nd Fix, once the other trades have been in you can second fix the wiring system. Concentration is vital for me at this stage. I can easily think I’m near the finish line and lose concentration. Good quality connections are vital and will show up in the testing if they have not been conducted well.",
+        "level": 4,
+        "parent": "/copilot-agent-note-4",
+        "children": []
+      },
+      {
+        "sid": "/h-testing-a-full-range-of-tests-and-applicability-can-be-found-in-the-following-file-under-the-section-testing-testing-web-view",
+        "title": "h) Testing, a full range of tests and applicability can be found in the following file under the section Testing. Testing  (Web view)",
+        "level": 4,
+        "parent": "/copilot-agent-note-4",
+        "children": []
+      },
+      {
+        "sid": "/i-paperwork-you-can-find-a-copy-of-the-installation-certificate-and-a-minor-works-certificate-here",
+        "title": "i) Paperwork, you can find a copy of the Installation certificate and a Minor Works Certificate here.",
+        "level": 4,
+        "parent": "/copilot-agent-note-4",
+        "children": []
+      },
+      {
+        "sid": "/j-analysis--its-always-good-to-analyse-each-job-if-time-allows-im-going-to-gather-all-the-information-for-each-project-in-a-copilot-notebook-and-then-analyse-using-the-llm-in-the-notebook",
+        "title": "j) Analysis – it’s always good to analyse each job if time allows. I’m going to gather all the information for each project in a Copilot Notebook and then analyse using the LLM in the notebook.",
+        "level": 4,
+        "parent": "/copilot-agent-note-4",
+        "children": []
+      }
+    ]
+  },
+  {
+    "sid": "/copilot-agent-note-5",
+    "title": "Copilot Agent Note:",
+    "level": 3,
+    "children": [
+      {
+        "sid": "/a-continuity-of-protective-conductors-inc-main-and-supplementary-bonding",
+        "title": "a. continuity of protective conductors, inc main and supplementary bonding.",
+        "level": 4,
+        "parent": "/copilot-agent-note-5",
+        "children": []
+      },
+      {
+        "sid": "/b-continuity-of-ring-final-circuit-conductors",
+        "title": "b. continuity of ring final circuit conductors,",
+        "level": 4,
+        "parent": "/copilot-agent-note-5",
+        "children": []
+      },
+      {
+        "sid": "/c-insulation-resistance",
+        "title": "c. insulation resistance",
+        "level": 4,
+        "parent": "/copilot-agent-note-5",
+        "children": []
+      },
+      {
+        "sid": "/d-protection-by-selv-pelv-or-by-electrical-separation",
+        "title": "d. protection by SELV, PELV or by electrical separation",
+        "level": 4,
+        "parent": "/copilot-agent-note-5",
+        "children": []
+      },
+      {
+        "sid": "/e-protection-by-barriers-or-enclosures-provided-during-erection",
+        "title": "e. protection by barriers or enclosures provided during erection",
+        "level": 4,
+        "parent": "/copilot-agent-note-5",
+        "children": []
+      },
+      {
+        "sid": "/f-insulation-resistance-of-non-conducting-floors-and-walls",
+        "title": "f. insulation resistance of non-conducting floors and walls",
+        "level": 4,
+        "parent": "/copilot-agent-note-5",
+        "children": []
+      },
+      {
+        "sid": "/g-polarity",
+        "title": "g. polarity",
+        "level": 4,
+        "parent": "/copilot-agent-note-5",
+        "children": []
+      },
+      {
+        "sid": "/h-earth-electrode-resistance",
+        "title": "h. earth electrode resistance",
+        "level": 4,
+        "parent": "/copilot-agent-note-5",
+        "children": []
+      },
+      {
+        "sid": "/i-protection-by-automatic-disconnection-of-supply",
+        "title": "i. protection by automatic disconnection of supply",
+        "level": 4,
+        "parent": "/copilot-agent-note-5",
+        "children": []
+      },
+      {
+        "sid": "/j-earth-fault-loop-impedance",
+        "title": "j. earth fault loop impedance",
+        "level": 4,
+        "parent": "/copilot-agent-note-5",
+        "children": []
+      },
+      {
+        "sid": "/k-additional-protection",
+        "title": "k. additional protection",
+        "level": 4,
+        "parent": "/copilot-agent-note-5",
+        "children": []
+      },
+      {
+        "sid": "/l-prospective-fault-current",
+        "title": "l. prospective fault current",
+        "level": 4,
+        "parent": "/copilot-agent-note-5",
+        "children": []
+      },
+      {
+        "sid": "/m-check-of-phase-sequence",
+        "title": "m. check of phase sequence",
+        "level": 4,
+        "parent": "/copilot-agent-note-5",
+        "children": []
+      },
+      {
+        "sid": "/n-functional-testing",
+        "title": "n. functional testing",
+        "level": 4,
+        "parent": "/copilot-agent-note-5",
+        "children": []
+      },
+      {
+        "sid": "/o-verification-of-voltage-drop",
+        "title": "o. verification of voltage drop",
+        "level": 4,
+        "parent": "/copilot-agent-note-5",
+        "children": []
+      }
+    ]
+  },
+  {
+    "sid": "/copilot-agent-note-6",
+    "title": "Copilot Agent Note:",
+    "level": 3,
+    "children": []
+  },
+  {
+    "sid": "/copilot-agent-note-7",
+    "title": "Copilot Agent Note:",
+    "level": 3,
+    "children": [
+      {
+        "sid": "/a-documentation",
+        "title": "a. Documentation",
+        "level": 4,
+        "parent": "/copilot-agent-note-7",
+        "children": []
+      },
+      {
+        "sid": "/b-certification",
+        "title": "b. Certification",
+        "level": 4,
+        "parent": "/copilot-agent-note-7",
+        "children": []
+      },
+      {
+        "sid": "/c-inspection",
+        "title": "c. Inspection",
+        "level": 4,
+        "parent": "/copilot-agent-note-7",
+        "children": []
+      },
+      {
+        "sid": "/d-testing",
+        "title": "d. Testing",
+        "level": 4,
+        "parent": "/copilot-agent-note-7",
+        "children": []
+      },
+      {
+        "sid": "/e-maintenance",
+        "title": "e. Maintenance",
+        "level": 4,
+        "parent": "/copilot-agent-note-7",
+        "children": []
+      }
+    ]
+  }
+]
