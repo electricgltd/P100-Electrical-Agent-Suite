@@ -1,7 +1,7 @@
 name: Feature request (Pack-aligned)
 description: One clear problem per issue; include AC and DoD for PR mapping.
-title: ""feat: <concise-title>""
-labels: [""feature""]
+title: "feat: <concise-title>"
+labels: [feature]
 body:
   - type: textarea
     id: problem
