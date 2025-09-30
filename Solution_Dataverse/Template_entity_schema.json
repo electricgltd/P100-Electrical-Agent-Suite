@@ -1,0 +1,46 @@
+{
+  "logicalName": "example_entity",
+  "displayName": "Example Entity",
+  "description": "Describe the purpose of this entity",
+  "fields": [
+    {
+      "name": "name",
+      "type": "string",
+      "required": true,
+      "description": "Primary name field"
+    },
+    {
+      "name": "isActive",
+      "type": "boolean",
+      "required": false,
+      "description": "Indicates if the record is active"
+    },
+    {
+      "name": "priority",
+      "type": "optionset",
+      "optionset": "priority"
+    },
+    {
+      "name": "scheduledDate",
+      "type": "date",
+      "behavior": "DateOnly"
+    },
+    {
+      "name": "effortHours",
+      "type": "number",
+      "precision": 2,
+      "min": 0,
+      "max": 1000
+    }
+  ],
+  "optionsets": [
+    {
+      "name": "priority",
+      "options": [
+        { "value": 0, "label": "Low" },
+        { "value": 1, "label": "Medium" },
+        { "value": 2, "label": "High" }
+      ]
+    }
+  ]
+}
