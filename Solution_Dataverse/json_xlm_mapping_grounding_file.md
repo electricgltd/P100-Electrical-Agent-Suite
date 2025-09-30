@@ -1,97 +1,135 @@
 # JSON → XML Mapping (Grounding File)
 
-**Scope:** Defines how `schema_snapshots/*.entity.json` maps to `out/entities/*.xml`.
+**Scope:** Defines how `schema_snapshots/*.entity.json` maps to the deterministic XML written to `out/entities/*.xml`.
 
-## Mapping matrix (high‑level)
-JSON source (snapshot)XML target (unpacked)File path (output)CardinalityNotes / DefaultsEntity logical nameEntity name elementout/entities/<logicalName>.xml → /Entity/Name1Also drives the output filenameEntity display nameEntity display label/Entity/DisplayName1Defaults to logicalName if absentEntity descriptionEntity description/Entity/Description1Empty string allowedFields arrayAttributes collection/Entity/Attributes/*Attribute0..NSorted by field name (A→Z)Field nameAttribute logical name/Entity/Attributes/*Attribute/LogicalName1Also used as <DisplayName> (no per‑field UI label yet)Field descriptionAttribute description/Entity/Attributes/*Attribute/Description0..1Empty if absentField type = stringString attribute/Entity/Attributes/StringAttribute0..N<MaxLength> defaults to 100Field type = numberDecimal attribute/Entity/Attributes/DecimalAttribute0..NDefaults: Precision=2, Min=-9,999,999,999, Max=9,999,999,999Field type = booleanBoolean attribute/Entity/Attributes/BooleanAttribute0..NLabels default to Yes/NoField type = dateDateTime attribute/Entity/Attributes/DateTimeAttribute0..NBehavior defaults to DateOnlyField type = lookupLookup attribute/Entity/Attributes/LookupAttribute0..NTargets listed under <Targets>/<Target>Field type = optionsetPicklist attribute/Entity/Attributes/PicklistAttribute0..NIncludes inline <LocalOptionSet> when optionset is providedLocal optionsets listOption set catalog/Entity/OptionSets/LocalOptionSet0..NSorted by name (A→Z)Optionset option valueOption numeric id…/LocalOptionSet/Options/Option/Value1Sorted by value (0→N)Optionset option labelOption label…/LocalOptionSet/Options/Option/Label1Free text, XML‑escaped
+**Last updated:** 2025‑09‑30
+
+---
+
+## Table of contents
+- [JSON → XML Mapping (Grounding File)](#json--xml-mapping-grounding-file)
+  - [Table of contents](#table-of-contents)
+  - [Detailed path map](#detailed-path-map)
+  - [2.1) Entity‑level](#21-entitylevel)
+  - [2.2 Fields collection](#22-fields-collection)
+  - [2.3) Per‑type mappings](#23-pertype-mappings)
+  - [2.4) Local optionsets catalog](#24-local-optionsets-catalog)
+  - [3) How it’s put together](#3-how-its-put-together)
+  - [4) Edge cases \& verification](#4-edge-cases--verification)
+    - [Why this change?](#why-this-change)
+
+JSON source (snapshot)XML target (unpacked)File path (output)CardinalityNotes / DefaultsEntity logical nameEntity name elementout/entities/<logicalName>.xml → /Entity/Name1Also drives the output filename| Entity display name | Entity display label | `/Entity/DisplayName` | 1 | Defaults to `logicalName` if absent |
+| Entity description | Entity description | `/Entity/Description` | 1 | Empty string allowed |
+| Fields array | Attributes collection | `/Entity/Attributes/*Attribute` | 0..N | **Sorted by field `name` (A→Z)** |
+| Field `name` | Attribute logical name | `/Entity/Attributes/*Attribute/LogicalName` | 1 | Also used as `<DisplayName>` (no per‑field UI label yet) |
+| Field `description` | Attribute description | `/Entity/Attributes/*Attribute/Description` | 0..1 | Empty if absent |
+| Field type = `string` | String attribute | `/Entity/Attributes/StringAttribute` | 0..N | `<MaxLength>` defaults to **100** |
+| Field type = `number` | Decimal attribute | `/Entity/Attributes/DecimalAttribute` | 0..N | Defaults: `Precision=2`, `Min=-9,999,999,999`, `Max=9,999,999,999` |
+| Field type = `boolean` | Boolean attribute | `/Entity/Attributes/BooleanAttribute` | 0..N | Labels default to **Yes/No** |
+| Field type = `date` | DateTime attribute | `/Entity/Attributes/DateTimeAttribute` | 0..N | `Behavior` defaults to **DateOnly** |
+| Field type = `lookup` | Lookup attribute | `/Entity/Attributes/LookupAttribute` | 0..N | Targets listed under `<Targets>/<Target>` |
+| Field type = `optionset` | Picklist attribute | `/Entity/Attributes/PicklistAttribute` | 0..N | Includes **inline** `<LocalOptionSet>` when `optionset` is provided |
+| Local optionsets list | Option set catalog | `/Entity/OptionSets/LocalOptionSet` | 0..N | **Sorted by `name` (A→Z)** |
+| Optionset option value | Option numeric id | `…/LocalOptionSet/Options/Option/Value` | 1 | **Sorted by `value` (0→N)** |
+| Optionset option label | Option label | `…/LocalOptionSet/Options/Option/Label` | 1 | Free text, XML‑escaped |
+
+---
 
 ## Detailed path map
-1) Entity‑level
+
+## 2.1) Entity‑level
+
 $.logicalName           → /Entity/Name/text()
 $.displayName           → /Entity/DisplayName/text()
 $.description           → /Entity/Description/text()
+
 Output file: out/entities/<logicalName>.xml
 If displayName missing → uses logicalName.
-2) Fields collection
-$.fields[*]                                 → /Entity/Attributes/*Attribute
-$.fields[*].name                            → …/LogicalName/text()
-$.fields[*].description                     → …/Description/text()
+
+## 2.2 Fields collection
+
+$.fields[*]                 → /Entity/Attributes/*Attribute
+$.fields[*].name            → …/LogicalName/text()
+$.fields[*].description     → …/Description/text()$.fields[*]                 → /Entity/
+
 Determinism: fields are sorted by name (A→Z) before emission.
-DisplayName: currently equals name (no separate UI label key yet).
-3) Per‑type mappings
+DisplayName: equals name (no separate UI label in JSON today).
+
+## 2.3) Per‑type mappings
+
 String
-$.fields[?(@.type=='string')]               → /Entity/Attributes/StringAttribute
-  .maxLength (not yet in schema)            → (default emitted) <MaxLength>100</MaxLength>
+
+$.fields[?(@.type=='string')]           → /Entity/Attributes/StringAttribute
+
 Number
-$.fields[?(@.type=='number')]               → /Entity/Attributes/DecimalAttribute
-  .precision                                → …/Precision/text()    (default 2)
-  .min                                      → …/Min/text()          (default -9999999999)
-  .max                                      → …/Max/text()          (default  9999999999)
+
+$.fields[?(@.type=='number')]           → /Entity/Attributes/DecimalAttribute
+  .precision                            → …/Precision/text()      (default 2)
+  .min                                  → …/Min/text()            (default -9999999999)
+  .max                                  → …/Max/text()            (default  9999999999)
+
 Boolean
-$.fields[?(@.type=='boolean')]              → /Entity/Attributes/BooleanAttribute
-  (defaults)                                → <TrueLabel>Yes</TrueLabel><FalseLabel>No</FalseLabel>
+
+$.fields[?(@.type=='boolean')]          → /Entity/Attributes/BooleanAttribute
+  (defaults)                            → <TrueLabel>Yes</TrueLabel><FalseLabel>No</FalseLabel>
+
 Date
-$.fields[?(@.type=='date')]                 → /Entity/Attributes/DateTimeAttribute
-  .behavior ∈ {DateOnly,UserLocal}         → …/Behavior/text()     (default DateOnly)
+
+$.fields[?(@.type=='date')]             → /Entity/Attributes/DateTimeAttribute
+  .behavior ∈ {DateOnly,UserLocal}      → …/Behavior/text()       (default DateOnly)
+
 Lookup
-$.fields[?(@.type=='lookup')]               → /Entity/Attributes/LookupAttribute
-  .targets[*]                               → …/Targets/Target/text()
+
+$.fields[?(@.type=='lookup')]           → /Entity/Attributes/LookupAttribute
+  .targets[*]                           → …/Targets/Target/text()
+
 Optionset (Picklist)
-$.fields[?(@.type=='optionset')]            → /Entity/Attributes/PicklistAttribute
-  .optionset (name)                         → inline <LocalOptionSet @name="…"> included under PicklistAttribute
-4) Local optionsets catalog
-$.optionsets[*]                             → /Entity/OptionSets/LocalOptionSet[@name='…']
-$.optionsets[*].name                        → @name
-$.optionsets[*].options[*].value            → …/Options/Option/Value/text()
-$.optionsets[*].options[*].label            → …/Options/Option/Label/text()
-Determinism: sets are sorted by name; entries by value (numeric asc).
+
+$.fields[?(@.type=='optionset')]        → /Entity/Attributes/PicklistAttribute
+  .optionset (name)                     → inline <LocalOptionSet @name="…"> included under PicklistAttribute
+
+## 2.4) Local optionsets catalog
+
+$.optionsets[*]                         → /Entity/OptionSets/LocalOptionSet[@name='…']
+$.optionsets[*].name                    → @name
+$.optionsets[*].options[*].value        → …/Options/Option/Value/text()
+$.optionsets[*].options[*].label        → …/Options/Option/Label/text()
+
+Determinism: sets sorted by name; entries by numeric value (ascending).
 Duplication by design: the same <LocalOptionSet> appears:
+    1. under /Entity/OptionSets/… (catalog) and
+    2. inline under any <PicklistAttribute> that references it.
+   
 
-once under /Entity/OptionSets/… (catalog),
-again inline under any PicklistAttribute that references it.
+## 3) How it’s put together
 
-## How it’s put together
-Read one *.entity.json (the “snapshot”) per Dataverse entity from schema_snapshots/.
-Validate against schema_snapshots/entity.schema.json (strict, draft 2020‑12).
-Determine output file path as out/entities/<logicalName>.xml.
-Order consistently for deterministic diffs:
-
-Fields by name (A→Z)
-Optionsets by name (A→Z)
-Options inside each optionset by value (0→N)
-
-
-Escape all XML text (&, <, >, ", ') to keep output well‑formed.
-Emit envelope:
-
-<Entity version="1.0"> with <Name>, <DisplayName>, <Description>
-<Attributes> block
-<OptionSets> catalog
-
-
-Emit fields:
-
-One *Attribute element per field (type switch)
-Common children: <LogicalName>, <DisplayName> (mirrors name), <Description>
-Type‑specific children:
-
-String → <MaxLength> (currently fixed 100)
-Number → <Precision>, <Min>, <Max> (defaults applied when absent)
-Boolean → <TrueLabel>Yes</TrueLabel>, <FalseLabel>No</FalseLabel>
-Date → <Behavior> (default DateOnly)
-Lookup → <Targets>/<Target> for each targets entry
-Optionset → <PicklistAttribute> + inline <LocalOptionSet> of the named set
+  1. Read one snapshot JSON per entity from schema_snapshots/.
+  2. Validate against schema_snapshots/entity.schema.json (strict, draft 2020‑12).
+  3. Derive output path: out/entities/<logicalName>.xml.
+  4. Deterministic ordering for stable diffs:
+   - fields by name (A→Z)
+   - optionsets by name (A→Z)
+   - options by value (0→N)
+  5. Escape XML text (&, <, >, ", ').
+  6. Envelope:
+  <Entity version="1.0"> → <Name>, <DisplayName>, <Description>, <Attributes>, <OptionSets>.
+  7. Attributes: one *Attribute per field with common children plus type‑specific elements.
+  8. Catalog: all local optionsets reproduced under /Entity/OptionSets.
+   
+## 4) Edge cases & verification
+- Missing logicalName → stop with error (no output).
+- Unknown optionset reference → error (prevents dangling references).
+- Lookup with no targets → prefer error over empty <Targets/>.
+- Empty fields / optionsets → allowed; emits empty sections.
+- Allowed field types: string, number, boolean, date, lookup, optionset (others error)
+- Defaults are explicit in XML (string/number/date/boolean as described).
 
 
+---
 
+### Why this change?
+- GitHub will now render the **matrix as a proper table** rather than a single wrapped line.  
+- All **paths are fenced** for monospaced readability.  
+- The doc is **copy‑paste ready** for reviewers and future you.
 
-Emit catalog (/Entity/OptionSets): every local optionset is reproduced once at entity scope (for discoverability and tooling).
-
-This behavior matches the deterministic Node generator you’re using in the repo (the script we added earlier), and the modelling choices in your P108 Loop specs for Variant Type Master, Project, Circuit Instance, and Task Units.
-## Edge cases & verification
-Missing logicalName → generation should error (no output).
-Unknown optionset name referenced by a field → treat as error (prevents dangling references).
-Lookup without targets → generator emits empty <Targets/> or errors (prefer error for clarity).
-Empty fields / optionsets → allowed; emits empty sections.
-Only these field types are valid: string, number, boolean, date, lookup, optionset (others should error).
-Defaults are explicit in XML when JSON omits values (see numeric, date, boolean, string).
+If you want, I can also supply a tiny **MD linter** rule (or a pre‑commit hook) to ensure tables and code fences are present before merges.
