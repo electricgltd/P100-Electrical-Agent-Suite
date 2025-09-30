@@ -1,0 +1,24 @@
+{
+  "logicalName": "",
+  "displayName": "",
+  "description": "",
+  "fields": [
+    {
+      "name": "",
+      "type": "",
+      "required": false,
+      "description": ""
+    }
+  ],
+  "optionsets": [
+    {
+      "name": "",
+      "options": [
+        {
+          "value": 0,
+          "label": ""
+        }
+      ]
+    }
+  ]
+}
