@@ -1,4 +1,4 @@
-```Mermaid
+```mermaid
 graph TD
     %% Aggregate Roots
     Project["Aggregate Root: Project"]
