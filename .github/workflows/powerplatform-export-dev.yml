@@ -35,7 +35,7 @@ jobs:
       # ✅ Export solution from DEV environment
       - name: Export solution
         run: |
-          mkdir solution
+          if (!(Test-Path "solution")) { mkdir solution }
           pac solution export `
             --path ./solution/P100-Electrical-Agent-Suite.zip `
             --name P100-Electrical-Agent-Suite `
@@ -47,4 +47,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: solution-zip
-          path: ./solution/P100-Electrical-Agent-Suite.zip
+          path: ./solution/P100-Electrical-Agent-Suite.zip 
