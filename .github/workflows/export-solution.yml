@@ -1,4 +1,4 @@
-name: Export Power Platform Solution
+name: Power Platform CI/CD - Export Solution
 
 on:
   workflow_dispatch:
@@ -39,7 +39,7 @@ jobs:
                               --path solution/solution.zip `
                               --overwrite
 
-      # ✅ Extract solution version for tagging
+      # ✅ Extract solution version from solution.xml
       - name: Get Solution Version
         id: get_version
         run: |
