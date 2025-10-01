@@ -44,7 +44,7 @@ jobs:
         run: |
           pac solution import `
             --path ./solution/P100-Electrical-Agent-Suite.zip `
-            --environment ${{ secrets.PP_ENV_URL }} `
+            --environment ${{ secrets.PP_ENVIRONMENT }} `
             --overwrite `
             --publish-changes
 
@@ -52,4 +52,4 @@ jobs:
       - name: Verify solution import status
         run: |
           echo "Checking solution status..."
-          pac solution list --environment ${{ secrets.PP_ENV_URL }} | findstr "P100-Electrical-Agent-Suite"
+          pac solution list --environment ${{ secrets.PP_ENVIRONMENT }} | findstr "P100-Electrical-Agent-Suite"
