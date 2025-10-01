@@ -28,6 +28,17 @@ jobs:
                             --packagetype Unmanaged
         shell: pwsh
 
+      - name: Validate zip exists
+        run: |
+          if (Test-Path "./Wip_Dataverse/P100-Electrical-Agent-Suite.zip") {
+            Write-Host "✅ Zip file found."
+            Get-Item "./Wip_Dataverse/P100-Electrical-Agent-Suite.zip" | Select-Object Name, Length
+          } else {
+            Write-Error "❌ Zip file not found. Pack step may have failed."
+            exit 1
+          }
+        shell: pwsh
+
       - name: Import solution
         run: |
           pac solution import --path ./Wip_Dataverse/P100-Electrical-Agent-Suite.zip `
@@ -36,3 +47,9 @@ jobs:
                               --overwrite `
                               --publish-changes
         shell: pwsh
+
+      - name: Upload packed solution as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: P100-Electrical-Agent-Suite-Zip
+          path: ./Wip_Dataverse/P100-Electrical-Agent-Suite.zip
