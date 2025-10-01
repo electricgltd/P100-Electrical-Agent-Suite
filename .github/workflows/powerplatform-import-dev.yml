@@ -8,17 +8,17 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      # ✅ Checkout your repository
+      # ✅ Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ✅ Install .NET SDK (required for pac CLI)
+      # ✅ Setup .NET SDK
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
 
-      # ✅ Install Power Platform CLI (pac)
+      # ✅ Install Power Platform CLI
       - name: Install Power Platform CLI
         run: |
           dotnet tool install --global Microsoft.PowerApps.CLI.Tool
@@ -47,3 +47,9 @@ jobs:
             --environment ${{ secrets.PP_ENV_URL }} `
             --overwrite `
             --publish-changes
+
+      # ✅ Status check: Verify import completed successfully
+      - name: Verify solution import status
+        run: |
+          echo "Checking solution status..."
+          pac solution list --environment ${{ secrets.PP_ENV_URL }} | findstr "P100-Electrical-Agent-Suite"
