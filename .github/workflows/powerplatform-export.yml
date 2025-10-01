@@ -12,13 +12,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ✅ Install Power Platform CLI (official MSI installer)
+      # ✅ Install Power Platform CLI (official MSI installer + PATH fix)
       - name: Install Power Platform CLI
         shell: pwsh
         run: |
           Invoke-WebRequest -Uri https://aka.ms/PowerAppsCLIInstaller -OutFile pac.msi
           Start-Process msiexec.exe -Wait -ArgumentList '/I pac.msi /quiet /norestart'
-          echo "C:\Program Files (x86)\Microsoft Power Platform CLI" >> $env:GITHUB_PATH
+          # Add PAC to PATH for current session
+          $env:PATH += ";C:\Program Files (x86)\Microsoft Power Platform CLI"
+          echo "PATH after update: $env:PATH"
+          # Verify PAC installation
+          pac --version
 
       # ✅ Authenticate using secrets
       - name: Authenticate with Power Platform
