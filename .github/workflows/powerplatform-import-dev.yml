@@ -49,7 +49,8 @@ jobs:
         shell: pwsh
 
       - name: Upload packed solution as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: P100-Electrical-Agent-Suite-Zip
           path: ./Wip_Dataverse/P100-Electrical-Agent-Suite.zip
+          if-no-files-found: error
