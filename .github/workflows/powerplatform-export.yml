@@ -1,63 +1,41 @@
-name: Power Platform Export
-
+name: export-and-commit
 on:
   workflow_dispatch:
 
 jobs:
   export-and-commit:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ✅ Authenticate with Power Platform
-      
-      - name: Authenticate with Power Platform
-        uses: ./.github/actions/authenticate
+      - name: Install Power Platform tools
+        uses: microsoft/powerplatform-actions/actions-install@v1.9.0
+
+      - name: WhoAmI (fail fast on creds)
+        uses: microsoft/powerplatform-actions/who-am-i@v1.9.0
         with:
           environment-url: ${{ secrets.PP_ENVIRONMENT }}
-          app-id: ${{ secrets.PP_APP_ID }}
-          client-secret: ${{ secrets.PP_CLIENT_SECRET }}
-          tenant-id: ${{ secrets.PP_TENANT_ID }}
+          app-id:          ${{ secrets.PP_APP_ID }}
+          tenant-id:       ${{ secrets.PP_TENANT_ID }}
+          client-secret:   ${{ secrets.PP_CLIENT_SECRET }}
 
-
-      # ✅ Export solution
-      - name: Export solution
-        uses: microsoft/powerplatform-actions/export-solution@v1
+      - name: Export Solution
+        uses: microsoft/powerplatform-actions/export-solution@v1.9.0
         with:
-          environment-url: ${{ secrets.PP_ENVIRONMENT }}
-          solution-name: P100-Electrical-Agent-Suite
-          managed: false
-          solution-output-file: exported-solution.zip
+          environment-url:     ${{ secrets.PP_ENVIRONMENT }}
+          app-id:               ${{ secrets.PP_APP_ID }}
+          tenant-id:            ${{ secrets.PP_TENANT_ID }}
+          client-secret:        ${{ secrets.PP_CLIENT_SECRET }}
+          solution-name:        ${{ secrets.PP_SOLUTION_NAME }}
+          solution-output-file: 'out/${{ secrets.PP_SOLUTION_NAME }}.zip'
+          working-directory:    'out'
 
-      # ✅ Extract version from solution.xml
-      - name: Extract solution version
-        id: get_version
-        run: |
-          Expand-Archive -Path ./exported-solution.zip -DestinationPath ./unpacked
-          [xml]$solutionXml = Get-Content "./unpacked/solution.xml"
-          $version = $solutionXml.ImportExportXml.SolutionManifest.Version
-          echo "version=$version" >> $GITHUB_OUTPUT
-        shell: pwsh
-
-      # ✅ Commit unpacked solution to repo
-      - name: Commit unpacked solution
-        run: |
-          git config --global user.name "Gareth Youens"
-          git config --global user.email "github-actions@github.com"
-          mkdir -Force ./solutions/P100-Electrical-Agent-Suite
-          Copy-Item -Path ./unpacked/* -Destination ./solutions/P100-Electrical-Agent-Suite -Recurse -Force
-          git add solutions/P100-Electrical-Agent-Suite
-          git commit -m "Exported solution version ${{ steps.get_version.outputs.version }}"
-          git push
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        shell: pwsh
-
-      # ✅ Upload exported solution as artefact
-      - name: Upload exported solution
-        uses: actions/upload-artifact@v4 
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
         with:
-          name: P100-Electrical-Agent-Suite-${{ steps.get_version.outputs.version }}
-          path: ./exported-solution.zip
+          name: exported-solution
+          path: out/${{ secrets.PP_SOLUTION_NAME }}.zip
