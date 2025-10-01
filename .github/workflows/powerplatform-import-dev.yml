@@ -1,4 +1,4 @@
-name: Power Platform Import to DEV
+name: Power Platform Import Workflow
 
 on:
   workflow_dispatch:
@@ -6,51 +6,44 @@ on:
 jobs:
   import-solution:
     runs-on: windows-latest
+
     steps:
+      # ✅ Checkout your repository
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
+      # ✅ Install .NET SDK (required for pac CLI)
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      # ✅ Install Power Platform CLI (pac)
       - name: Install Power Platform CLI
-        run: npm install -g pac
-
-      - name: Authenticate
         run: |
-          pac auth create --tenant ${{ secrets.PP_TENANT_ID }} `
-                          --applicationId ${{ secrets.PP_CLIENT_ID }} `
-                          --clientSecret ${{ secrets.PP_CLIENT_SECRET }} `
-                          --environment ${{ secrets.PP_ENV_DEV_URL }}
-        shell: pwsh
+          dotnet tool install --global Microsoft.PowerApps.CLI.Tool
+          echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
-      - name: Pack solution
+      # ✅ Authenticate with Service Principal
+      - name: Authenticate with Power Platform
         run: |
-          pac solution pack --zipFile ./Wip_Dataverse/P100-Electrical-Agent-Suite.zip `
-                            --folder ./solutions/P100-Electrical-Agent-Suite `
-                            --packagetype Unmanaged
-        shell: pwsh
+          pac auth create `
+            --tenant ${{ secrets.PP_TENANT_ID }} `
+            --applicationId ${{ secrets.PP_APP_ID }} `
+            --clientSecret ${{ secrets.PP_CLIENT_SECRET }}
 
-      - name: Validate zip exists
-        run: |
-          if (Test-Path "./Wip_Dataverse/P100-Electrical-Agent-Suite.zip") {
-            Write-Host "✅ Zip file found."
-            Get-Item "./Wip_Dataverse/P100-Electrical-Agent-Suite.zip" | Select-Object Name, Length
-          } else {
-            Write-Error "❌ Zip file not found. Pack step may have failed."
-            exit 1
-          }
-        shell: pwsh
+      # ✅ Download solution artifact
+      - name: Download solution artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: solution-zip
+          path: ./solution
 
+      # ✅ Import solution into DEV
       - name: Import solution
         run: |
-          pac solution import --path ./Wip_Dataverse/P100-Electrical-Agent-Suite.zip `
-                              --async `
-                              --max-async-wait 60 `
-                              --overwrite `
-                              --publish-changes
-        shell: pwsh
-
-      - name: Upload packed solution as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: P100-Electrical-Agent-Suite-Zip
-          path: ./Wip_Dataverse/P100-Electrical-Agent-Suite.zip
-          if-no-files-found: error
+          pac solution import `
+            --path ./solution/P100-Electrical-Agent-Suite.zip `
+            --environment ${{ secrets.PP_ENV_URL }} `
+            --overwrite `
+            --publish-changes
