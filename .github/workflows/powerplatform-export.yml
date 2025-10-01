@@ -1,4 +1,4 @@
-name: Export Power Platform Solution
+name: Export Power Platform Solution (Artefact Only)
 
 on:
   workflow_dispatch:
@@ -11,17 +11,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ✅ Install Power Platform CLI using official action
-      - name: Install Power Platform CLI
-        uses: microsoft/powerplatform-actions/actions-install@v1
+      - name: Install Power Platform CLI (PAC)
+        uses: microsoft/powerplatform-actions@v1
 
-      # ✅ Verify PAC installation
-      - name: Verify PAC installation
-        run: pac --version
-        shell: pwsh
-
-      # ✅ Authenticate with Power Platform
-      - name: Authenticate with Power Platform (pac)
+      - name: Authenticate with Power Platform (PAC)
         run: |
           pac auth create `
             --environment ${{ secrets.POWERPLATFORM_ENV }} `
@@ -30,29 +23,25 @@ jobs:
             --clientSecret ${{ secrets.AZURE_CLIENT_SECRET }}
         shell: pwsh
 
-      # ✅ Export solution
-      - name: Export solution
+      - name: Export solution (PAC)
         run: |
           pac solution export `
-            --name P100-Electrical-Agent-Suite `
-            --path ./exported-solution.zip `
+            --name "P100-Electrical-Agent-Suite" `
+            --path "./exported-solution.zip" `
             --managed false
         shell: pwsh
 
-      # ✅ Extract version
       - name: Extract solution version
         id: get_version
         run: |
-          Expand-Archive -Path ./exported-solution.zip -DestinationPath ./unpacked
+          Expand-Archive -Path ./exported-solution.zip -DestinationPath ./unpacked -Force
           [xml]$solutionXml = Get-Content "./unpacked/solution.xml"
           $version = $solutionXml.ImportExportXml.SolutionManifest.Version
-          echo "version=$version" >> $env:GITHUB_OUTPUT
+          echo "version=$version" >> $GITHUB_OUTPUT
         shell: pwsh
 
-      # ✅ Upload artefact
       - name: Upload exported solution
         uses: actions/upload-artifact@v4
         with:
-      
           name: P100-Electrical-Agent-Suite-${{ steps.get_version.outputs.version }}
           path: ./exported-solution.zip
