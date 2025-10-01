@@ -1,0 +1,25 @@
+jobs:
+  drift-check:
+    name: Drift Check (JSON vs Generated Artefacts)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Detect changed files
+        id: changes
+        run: |
+          echo "json_changed=$(git diff --name-only origin/main...HEAD | grep '^schema_snapshots/.*\.entity\.json$' || true)" >> $GITHUB_ENV
+          echo "xml_changed=$(git diff --name-only origin/main...HEAD | grep '^out/entities/.*\.xml$' || true)" >> $GITHUB_ENV
+          echo "docs_changed=$(git diff --name-only origin/main...HEAD | grep -E '^(docs/entities/|grounding-files/json-xml-mapping\.md)' || true)" >> $GITHUB_ENV
+
+      - name: Fail if JSON changed but no artefacts updated
+        run: |
+          if [ -n "$json_changed" ] && [ -z "$xml_changed" ] && [ -z "$docs_changed" ]; then
+            echo "❌ Detected changes to schema_snapshots/*.entity.json without regenerating solution artefacts."
+            echo ""
+            echo "✅ Please re-export and unpack from Dev, then run:"
+            echo "    docker run --rm -v \"\${PWD}:/work\" -w /work node:20-alpine sh -lc 'npm ci; node tools/validate-entities.mjs && node tools/entity-json-to-xml.mjs && node tools/entity-json-to-md.mjs'"
+            echo ""
+            echo "This ensures XML and Markdown docs stay in sync."
+            exit 1
+          fi
