@@ -10,7 +10,7 @@ inputs:
      description: 'URL of Power Platform environment to connect with; e.g. "https://test-env.crm.dynamics.com"'
      required: false
 
-  PP_TENANT_ID:
+  PP_USER_NAME:
     description: 'Power Platform user name to authenticate with, e.g. myname@my-org.onmicrosoft.com. Setting this input makes user-name and password required; specifying alternate "PP_APP_ID" credential set of inputs will result in an error.'
     required: false
 
