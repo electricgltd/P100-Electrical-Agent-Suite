@@ -16,8 +16,7 @@
   - [2.4) Local optionsets catalog](#24-local-optionsets-catalog)
   - [3) How it’s put together](#3-how-its-put-together)
   - [4) Edge cases \& verification](#4-edge-cases--verification)
-  - [5) Worked example](#5-worked-example)
-  - [}](#)
+  - [5) Worked Example — p100\_variant](#5-worked-example--p100_variant)
     - [Why this change?](#why-this-change)
 
 JSON source (snapshot)XML target (unpacked)File path (output)CardinalityNotes / DefaultsEntity logical nameEntity name elementout/entities/<logicalName>.xml → /Entity/Name1Also drives the output filename| Entity display name | Entity display label | `/Entity/DisplayName` | 1 | Defaults to `logicalName` if absent |
@@ -126,21 +125,76 @@ Duplication by design: the same <LocalOptionSet> appears:
 - Allowed field types: string, number, boolean, date, lookup, optionset (others error)
 - Defaults are explicit in XML (string/number/date/boolean as described).
 
-## 5) Worked example
-**Input JSON**
+## 5) Worked Example — p100_variant
 
-{
-  "logicalName": "p108_variant_type",
+Input JSON (schema_snapshots/p100_variant.entity.json)
+  "logicalName": "p100_variant",
+  "displayName": "Variant",
+  "description": "Defines product variants",
   "fields": [
-    { "name": "variant_category", "type": "optionset", "optionset": "variant_category_set" }
+    { "name": "variant_name", "type": "string", "description": "Variant name" },
+    { "name": "variant_category", "type": "optionset", "optionset": "variant_category_set" },
+    { "name": "related_product", "type": "lookup", "targets": ["p100_product"] }
   ],
   "optionsets": [
-    { "name": "variant_category_set", "options": [
-      { "value": 1, "label": "Standard" },
-      { "value": 2, "label": "Premium" }
-    ]}
+    {
+      "name": "variant_category_set",
+      "options": [
+        { "value": 1, "label": "Standard" },
+        { "value": 2, "label": "Premium" }
+      ]
+    }
   ]
-}
+
+Output XML (out/entities/p100_variant.xml)
+
+<Entity version="1.0">
+  <Name>p100_variant</Name>
+  <DisplayName>Variant</DisplayName>
+  <Description>Defines product variants</Description>
+
+  <Attributes>
+    <!-- Text field -->
+    <StringAttribute>
+      <LogicalName>variant_name</LogicalName>
+      <DisplayName>variant_name</DisplayName>
+      <Description>Variant name</Description>
+      <MaxLength>100</MaxLength>
+    </StringAttribute>
+
+    <!-- Choice (Picklist) field -->
+    <PicklistAttribute>
+      <LogicalName>variant_category</LogicalName>
+      <DisplayName>variant_category</DisplayName>
+      <LocalOptionSet name="variant_category_set">
+        <Options>
+          <Option><Value>1</Value><Label>Standard</Label></Option>
+          <Option><Value>2</Value><Label>Premium</Label></Option>
+        </Options>
+      </LocalOptionSet>
+    </PicklistAttribute>
+
+    <!-- Lookup field -->
+    <LookupAttribute>
+      <LogicalName>related_product</LogicalName>
+      <DisplayName>related_product</DisplayName>
+      <Targets>
+        <Target>p100_product</Target>
+      </Targets>
+    </LookupAttribute>
+  </Attributes>
+
+  <!-- Global OptionSet catalog -->
+  <OptionSets>
+    <LocalOptionSet name="variant_category_set">
+      <Options>
+        <Option><Value>1</Value><Label>Standard</Label></Option>
+        <Option><Value>2</Value><Label>Premium</Label></Option>
+      </Options>
+    </LocalOptionSet>
+  </OptionSets>
+</Entity>
+
 ---
 
 ### Why this change?
