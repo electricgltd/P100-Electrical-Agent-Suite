@@ -11,62 +11,30 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Power Platform CLI (PAC)
-        run: |
-          # Try winget first (Windows runner). If winget not available or install fails, fallback to npm install.
-          if (Get-Command winget -ErrorAction SilentlyContinue) {
-            Write-Host "Attempting to install PAC via winget..."
-            winget install --id Microsoft.PowerPlatform.CLI -e --accept-package-agreements --accept-source-agreements
-            if ($LASTEXITCODE -ne 0) {
-              Write-Host "winget install failed (exit code $LASTEXITCODE). Falling back to npm global install..."
-              npm install -g @microsoft/powerplatform-cli || npm install -g pac
-            }
-          } else {
-            Write-Host "winget not available, installing PAC via npm..."
-            npm install -g @microsoft/powerplatform-cli || npm install -g pac
-          }
+      # ✅ Authenticate and export using official Microsoft action
+      - name: Authenticate with Power Platform
+        uses: microsoft/powerplatform-actions@v1
+        with:
+          command: auth create
+          args: >-
+            --environment ${{ secrets.POWERPLATFORM_ENV }}
+            --tenant ${{ secrets.AZURE_TENANT_ID }}
+            --applicationId ${{ secrets.AZURE_CLIENT_ID }}
+            --clientSecret ${{ secrets.AZURE_CLIENT_SECRET }}
 
-          # Ensure npm global bin is on PATH so 'pac' is discoverable
-          try {
-            $npmBin = (& npm bin -g).Trim()
-            if ($npmBin -and -Not ($env:PATH -split ';' | Where-Object { $_ -eq $npmBin })) {
-              Write-Host "Adding npm global bin to PATH: $npmBin"
-              $env:PATH = "$env:PATH;$npmBin"
-            }
-          } catch {
-            Write-Host "Could not determine npm global bin: $_"
-          }
-
-          Write-Host "Verify pac is available:"
-          if (Get-Command pac -ErrorAction SilentlyContinue) {
-            pac --version
-          } else {
-            Write-Error "pac CLI not found after install. Exiting."
-            exit 1
-          }
-        shell: pwsh
-
-      - name: Authenticate with Power Platform (PAC)
-        run: |
-          pac auth create `
-            --environment ${{ secrets.PP_ENVIRONMENT }} `
-            --tenant ${{ secrets.PP_TENANT_ID }} `
-            --applicationId ${{ secrets.PP_APP_ID}} `
-            --clientSecret ${{ secrets.PP_CLIENT_SECRET }}
-        shell: pwsh
-
-      - name: Export solution (PAC)
-        run: |
-          pac solution export `
-            --name "P100-Electrical-Agent-Suite" `
-            --path "./exported-solution.zip" `
+      - name: Export solution
+        uses: microsoft/powerplatform-actions@v1
+        with:
+          command: solution export
+          args: >-
+            --name P100-Electrical-Agent-Suite
+            --path ./exported-solution.zip
             --managed false
-        shell: pwsh
 
       - name: Extract solution version
         id: get_version
         run: |
-          Expand-Archive -Path ./exported-solution.zip -DestinationPath ./unpacked -Force
+          Expand-Archive -Path ./exported-solution.zip -DestinationPath ./unpacked
           [xml]$solutionXml = Get-Content "./unpacked/solution.xml"
           $version = $solutionXml.ImportExportXml.SolutionManifest.Version
           echo "version=$version" >> $GITHUB_OUTPUT
