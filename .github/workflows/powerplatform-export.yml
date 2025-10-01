@@ -1,4 +1,4 @@
-name: Power Platform - Export Solution
+name: Export Power Platform Solution
 
 on:
   workflow_dispatch:
@@ -12,55 +12,54 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ✅ Install Power Platform CLI (official MSI installer + PATH fix)
+      # ✅ Install Power Platform CLI (PAC) via MSI and update PATH
       - name: Install Power Platform CLI
-        shell: pwsh
         run: |
           Invoke-WebRequest -Uri https://aka.ms/PowerAppsCLIInstaller -OutFile pac.msi
-          Start-Process msiexec.exe -Wait -ArgumentList '/I pac.msi /quiet /norestart'
-          # Add PAC to PATH for current session
-          $env:PATH += ";C:\Program Files (x86)\Microsoft Power Platform CLI"
-          echo "PATH after update: $env:PATH"
-          # Verify PAC installation
+          Start-Process msiexec.exe -Wait -ArgumentList '/I pac.msi /quiet /qn /norestart'
+          echo "C:\Program Files (x86)\Microsoft Power Platform CLI" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
           pac --version
+        shell: pwsh
 
-      # ✅ Authenticate using secrets
+      # ✅ Authenticate with Power Platform using Service Principal
       - name: Authenticate with Power Platform
-        shell: pwsh
         run: |
-          pac auth create --url ${{ secrets.DEV_ENV_URL }} `
-                          --tenant ${{ secrets.TENANT_ID }} `
-                          --applicationId ${{ secrets.CLIENT_ID }} `
-                          --clientSecret ${{ secrets.CLIENT_SECRET }}
-          pac auth select --index 1
-
-      # ✅ Ensure solution folder exists
-      - name: Create solution folder if missing
+          pac auth create `
+            --environment $env:POWERPLATFORM_ENV `
+            --tenant $env:AZURE_TENANT_ID `
+            --applicationId $env:AZURE_CLIENT_ID `
+            --clientSecret $env:AZURE_CLIENT_SECRET
         shell: pwsh
-        run: |
-          if (!(Test-Path "solution")) { mkdir solution }
+        env:
+          POWERPLATFORM_ENV: ${{ secrets.POWERPLATFORM_ENV }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
 
-      # ✅ Export the solution
-      - name: Export Solution
+      # ✅ Export solution
+      - name: Export solution
+        run: |
+          pac solution export `
+            --name P100-Electrical-Agent-Suite `
+            --path ./exported-solution.zip `
+            --managed false
         shell: pwsh
-        run: |
-          pac solution export --name P100-Electrical-Agent-Suite `
-                              --path solution/solution.zip `
-                              --overwrite
 
-      # ✅ Extract solution version for tagging
-      - name: Get Solution Version
+      # ✅ Extract version from solution.xml
+      - name: Extract solution version
         id: get_version
-        shell: pwsh
         run: |
-          Expand-Archive -Path solution/solution.zip -DestinationPath solution/unpacked
-          [xml]$xml = Get-Content "solution/unpacked/solution.xml"
-          $version = $xml.ImportExportXml.SolutionManifest.Version
+          [xml]$xml = Get-Content "./exported-solution.zip" -Raw
+          # Unzip first
+          Expand-Archive -Path ./exported-solution.zip -DestinationPath ./unpacked
+          [xml]$solutionXml = Get-Content "./unpacked/solution.xml"
+          $version = $solutionXml.ImportExportXml.SolutionManifest.Version
           echo "version=$version" >> $env:GITHUB_OUTPUT
+        shell: pwsh
 
-      # ✅ Upload artifact with version in name
-      - name: Upload Exported Solution as Artifact
+      # ✅ Upload artefact with versioned name
+      - name: Upload exported solution
         uses: actions/upload-artifact@v4
         with:
           name: P100-Electrical-Agent-Suite-${{ steps.get_version.outputs.version }}
-          path: solution/solution.zip
+          path: ./exported-solution.zip
