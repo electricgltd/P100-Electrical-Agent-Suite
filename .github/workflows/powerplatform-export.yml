@@ -8,23 +8,22 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      # ✅ Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ✅ Install Power Platform CLI (PAC) via MSI and update PATH
+      # Install PAC and update PATH for next steps
       - name: Install Power Platform CLI
         run: |
           Invoke-WebRequest -Uri https://aka.ms/PowerAppsCLIInstaller -OutFile pac.msi
           Start-Process msiexec.exe -Wait -ArgumentList '/I pac.msi /quiet /qn /norestart'
-          # Add PAC to PATH for current step
-          $env:PATH += ";C:\Program Files (x86)\Microsoft Power Platform CLI"
-          pac --version
-          # Persist for later steps
           echo "C:\Program Files (x86)\Microsoft Power Platform CLI" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         shell: pwsh
 
-      # ✅ Authenticate with Power Platform using Service Principal
+      # Verify PAC in a new step
+      - name: Verify PAC installation
+        run: pac --version
+        shell: pwsh
+
       - name: Authenticate with Power Platform
         run: |
           pac auth create `
@@ -39,7 +38,6 @@ jobs:
           AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
 
-      # ✅ Export solution
       - name: Export solution
         run: |
           pac solution export `
@@ -48,7 +46,6 @@ jobs:
             --managed false
         shell: pwsh
 
-      # ✅ Extract version from solution.xml
       - name: Extract solution version
         id: get_version
         run: |
@@ -58,7 +55,6 @@ jobs:
           echo "version=$version" >> $env:GITHUB_OUTPUT
         shell: pwsh
 
-      # ✅ Upload artefact with versioned name
       - name: Upload exported solution
         uses: actions/upload-artifact@v4
         with:
