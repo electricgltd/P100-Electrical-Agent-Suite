@@ -1,0 +1,37 @@
+name: Power Platform Import to DEV
+
+on:
+  workflow_dispatch:
+
+jobs:
+  import-solution:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Power Platform CLI
+        run: npm install -g pac
+        shell: pwsh
+
+      - name: Authenticate with Power Platform
+        run: |
+          pac auth create --tenant "${{ secrets.PP_TENANT_ID }}" `
+                          --applicationId "${{ secrets.PP_CLIENT_ID }}" `
+                          --clientSecret "${{ secrets.PP_CLIENT_SECRET }}" `
+                          --environment "${{ secrets.PP_ENV_DEV_URL }}"
+        shell: pwsh
+
+      - name: Pack solution
+        run: |
+          pac solution pack --zipFile "./_wip/P100-Electrical-Agent-Suite.zip" `
+                            --folder "./solutions/P100-Electrical-Agent-Suite" `
+                            --packagetype Unmanaged
+        shell: pwsh
+
+      - name: Import solution to DEV
+        run: |
+          pac solution import --path "./_wip/P100-Electrical-Agent-Suite.zip" `
+                              --async `
+                              --max-async-wait 60
+        shell: pwsh
