@@ -1,0 +1,50 @@
+name: Power Platform Export Workflow
+
+on:
+  workflow_dispatch: # Manual trigger for now
+
+jobs:
+  export-solution:
+    runs-on: windows-latest
+
+    steps:
+      # ✅ Checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ✅ Setup .NET SDK (required for pac CLI)
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      # ✅ Install Power Platform CLI
+      - name: Install Power Platform CLI
+        run: |
+          dotnet tool install --global Microsoft.PowerApps.CLI.Tool
+          echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+
+      # ✅ Authenticate with Service Principal
+      - name: Authenticate with Power Platform
+        run: |
+          pac auth create `
+            --tenant ${{ secrets.PP_TENANT_ID }} `
+            --applicationId ${{ secrets.PP_APP_ID }} `
+            --clientSecret ${{ secrets.PP_CLIENT_SECRET }}
+
+      # ✅ Export solution from DEV environment
+      - name: Export solution
+        run: |
+          mkdir solution
+          pac solution export `
+            --path ./solution/P100-Electrical-Agent-Suite.zip `
+            --name P100-Electrical-Agent-Suite `
+            --managed false `
+            --environment ${{ secrets.PP_ENV_URL }}
+
+      # ✅ Upload solution artifact for Import workflow
+      - name: Upload solution artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: solution-zip
+          path: ./solution/P100-Electrical-Agent-Suite.zip
