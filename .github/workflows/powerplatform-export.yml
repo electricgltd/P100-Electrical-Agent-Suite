@@ -11,44 +11,35 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Install PAC via MSI
+      # ✅ Install Power Platform CLI using official action
       - name: Install Power Platform CLI
-        run: |
-          Invoke-WebRequest -Uri https://aka.ms/PowerAppsCLIInstaller -OutFile pac.msi
-          Start-Process msiexec.exe -Wait -ArgumentList '/I pac.msi /quiet /qn /norestart'
-        shell: pwsh
+        uses: microsoft/powerplatform-actions/actions-install@v1
 
-      # Verify PAC using full path
+      # ✅ Verify PAC installation
       - name: Verify PAC installation
-        run: |
-          & "C:\Program Files (x86)\Microsoft Power Platform CLI\pac.exe" --version
+        run: pac --version
         shell: pwsh
 
-      # Authenticate with Power Platform
-      - name: Authenticate with Power Platform
+      # ✅ Authenticate with Power Platform
+      - name: Authenticate with Power Platform (pac)
         run: |
-          & "C:\Program Files (x86)\Microsoft Power Platform CLI\pac.exe" auth create `
-            --environment $env:POWERPLATFORM_ENV `
-            --tenant $env:AZURE_TENANT_ID `
-            --applicationId $env:AZURE_CLIENT_ID `
-            --clientSecret $env:AZURE_CLIENT_SECRET
+          pac auth create `
+            --environment ${{ secrets.POWERPLATFORM_ENV }} `
+            --tenant ${{ secrets.AZURE_TENANT_ID }} `
+            --applicationId ${{ secrets.AZURE_CLIENT_ID }} `
+            --clientSecret ${{ secrets.AZURE_CLIENT_SECRET }}
         shell: pwsh
-        env:
-          POWERPLATFORM_ENV: ${{ secrets.POWERPLATFORM_ENV }}
-          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
 
-      # Export solution
+      # ✅ Export solution
       - name: Export solution
         run: |
-          & "C:\Program Files (x86)\Microsoft Power Platform CLI\pac.exe" solution export `
+          pac solution export `
             --name P100-Electrical-Agent-Suite `
             --path ./exported-solution.zip `
             --managed false
         shell: pwsh
 
-      # Extract version
+      # ✅ Extract version
       - name: Extract solution version
         id: get_version
         run: |
@@ -58,9 +49,10 @@ jobs:
           echo "version=$version" >> $env:GITHUB_OUTPUT
         shell: pwsh
 
-      # Upload artefact
+      # ✅ Upload artefact
       - name: Upload exported solution
         uses: actions/upload-artifact@v4
         with:
+      
           name: P100-Electrical-Agent-Suite-${{ steps.get_version.outputs.version }}
           path: ./exported-solution.zip
