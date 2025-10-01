@@ -12,7 +12,18 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Power Platform CLI (PAC)
-        uses: microsoft/powerplatform-actions@v1
+        run: |
+          # Try winget first (Windows runner). If not available or install fails, fallback to npm install.
+          if (Get-Command winget -ErrorAction SilentlyContinue) {
+            Write-Host "Installing PAC via winget..."
+            winget install --id Microsoft.PowerPlatform.CLI -e --accept-package-agreements --accept-source-agreements
+          } else {
+            Write-Host "winget not available, installing PAC via npm..."
+            npm install -g @microsoft/powerplatform-cli || npm install -g pac
+          }
+          Write-Host "Verify pac is available:"
+          pac --version
+        shell: pwsh
 
       - name: Authenticate with Power Platform (PAC)
         run: |
