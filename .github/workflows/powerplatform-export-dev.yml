@@ -1,50 +1,41 @@
-name: Power Platform Export Workflow
+name: Export Power Platform Solution
 
 on:
-  workflow_dispatch: # Manual trigger for now
+  workflow_dispatch:
 
 jobs:
   export-solution:
     runs-on: windows-latest
 
     steps:
-      # ✅ Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ✅ Setup .NET SDK (required for pac CLI)
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.0.x'
-
-      # ✅ Install Power Platform CLI
       - name: Install Power Platform CLI
         run: |
-          dotnet tool install --global Microsoft.PowerApps.CLI.Tool
-          echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+          dotnet tool install --global Microsoft.PowerPlatform.CLI.Tool
+          echo "##[add-path]$HOME/.dotnet/tools"
 
-      # ✅ Authenticate with Service Principal
       - name: Authenticate with Power Platform
         run: |
-          pac auth create `
-            --tenant ${{ secrets.PP_TENANT_ID }} `
-            --applicationId ${{ secrets.PP_APP_ID }} `
-            --clientSecret ${{ secrets.PP_CLIENT_SECRET }}
+          pac auth create --url ${{ secrets.DEV_ENV_URL }} `
+                          --tenant ${{ secrets.TENANT_ID }} `
+                          --applicationId ${{ secrets.CLIENT_ID }} `
+                          --clientSecret ${{ secrets.CLIENT_SECRET }}
+          pac auth select --index 1
 
-      # ✅ Export solution from DEV environment
-      - name: Export solution
+      - name: Create solution folder if missing
         run: |
           if (!(Test-Path "solution")) { mkdir solution }
-          pac solution export `
-            --path ./solution/P100-Electrical-Agent-Suite.zip `
-            --name P100-Electrical-Agent-Suite `
-            --managed false `
-            --environment ${{ secrets.PP_ENV_URL }}
 
-      # ✅ Upload solution artifact for Import workflow
-      - name: Upload solution artifact
+      - name: Export Solution
+        run: |
+          pac solution export --name P100-Electrical-Agent-Suite `
+                              --path solution/solution.zip `
+                              --overwrite
+
+      - name: Upload Exported Solution as Artifact
         uses: actions/upload-artifact@v4
         with:
           name: solution-zip
-          path: ./solution/P100-Electrical-Agent-Suite.zip 
+          path: solution/solution.zip
