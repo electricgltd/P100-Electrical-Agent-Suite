@@ -12,26 +12,27 @@ jobs:
 
       - name: Install Power Platform CLI
         run: npm install -g pac
-        shell: pwsh
 
-      - name: Authenticate with Power Platform
+      - name: Authenticate
         run: |
-          pac auth create --tenant "${{ secrets.PP_TENANT_ID }}" `
-                          --applicationId "${{ secrets.PP_CLIENT_ID }}" `
-                          --clientSecret "${{ secrets.PP_CLIENT_SECRET }}" `
-                          --environment "${{ secrets.PP_ENV_DEV_URL }}"
+          pac auth create --tenant ${{ secrets.PP_TENANT_ID }} `
+                          --applicationId ${{ secrets.PP_CLIENT_ID }} `
+                          --clientSecret ${{ secrets.PP_CLIENT_SECRET }} `
+                          --environment ${{ secrets.PP_ENV_DEV_URL }}
         shell: pwsh
 
       - name: Pack solution
         run: |
-          pac solution pack --zipFile "./_wip/P100-Electrical-Agent-Suite.zip" `
-                            --folder "./solutions/P100-Electrical-Agent-Suite" `
+          pac solution pack --zipFile ./Wip_Dataverse/P100-Electrical-Agent-Suite.zip `
+                            --folder ./solutions/P100-Electrical-Agent-Suite `
                             --packagetype Unmanaged
         shell: pwsh
 
-      - name: Import solution to DEV
+      - name: Import solution
         run: |
-          pac solution import --path "./_wip/P100-Electrical-Agent-Suite.zip" `
+          pac solution import --path ./Wip_Dataverse/P100-Electrical-Agent-Suite.zip `
                               --async `
-                              --max-async-wait 60
+                              --max-async-wait 60 `
+                              --overwrite `
+                              --publish-changes
         shell: pwsh
