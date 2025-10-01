@@ -1,4 +1,4 @@
-name: Power Platform CI/CD - Export Solution
+name: Power Platform - Export Solution
 
 on:
   workflow_dispatch:
@@ -12,14 +12,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ✅ Install Power Platform CLI
+      # ✅ Install Power Platform CLI (official MSI installer)
       - name: Install Power Platform CLI
+        shell: pwsh
         run: |
-          dotnet tool install --global Microsoft.PowerPlatform.CLI.Tool
-          echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+          Invoke-WebRequest -Uri https://aka.ms/PowerAppsCLIInstaller -OutFile pac.msi
+          Start-Process msiexec.exe -Wait -ArgumentList '/I pac.msi /quiet /norestart'
+          echo "C:\Program Files (x86)\Microsoft Power Platform CLI" >> $env:GITHUB_PATH
 
       # ✅ Authenticate using secrets
       - name: Authenticate with Power Platform
+        shell: pwsh
         run: |
           pac auth create --url ${{ secrets.DEV_ENV_URL }} `
                           --tenant ${{ secrets.TENANT_ID }} `
@@ -29,19 +32,22 @@ jobs:
 
       # ✅ Ensure solution folder exists
       - name: Create solution folder if missing
+        shell: pwsh
         run: |
           if (!(Test-Path "solution")) { mkdir solution }
 
       # ✅ Export the solution
       - name: Export Solution
+        shell: pwsh
         run: |
           pac solution export --name P100-Electrical-Agent-Suite `
                               --path solution/solution.zip `
                               --overwrite
 
-      # ✅ Extract solution version from solution.xml
+      # ✅ Extract solution version for tagging
       - name: Get Solution Version
         id: get_version
+        shell: pwsh
         run: |
           Expand-Archive -Path solution/solution.zip -DestinationPath solution/unpacked
           [xml]$xml = Get-Content "solution/unpacked/solution.xml"
