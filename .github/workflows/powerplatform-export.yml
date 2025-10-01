@@ -1,36 +1,36 @@
-name: Export Power Platform Solution (Artefact Only)
+name: Export and Commit Power Platform Solution
 
 on:
   workflow_dispatch:
 
 jobs:
-  export-solution:
+  export-and-commit:
     runs-on: windows-latest
 
     steps:
+      # ✅ Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ✅ Authenticate and export using official Microsoft action
+      # ✅ Authenticate with Power Platform
       - name: Authenticate with Power Platform
-        uses: microsoft/powerplatform-actions@v1
+        uses: microsoft/powerplatform-actions/authenticate-environment@v1.1.0
         with:
-          command: auth create
-          args: >-
-            --environment ${{ secrets.POWERPLATFORM_ENV }}
-            --tenant ${{ secrets.AZURE_TENANT_ID }}
-            --applicationId ${{ secrets.AZURE_CLIENT_ID }}
-            --clientSecret ${{ secrets.AZURE_CLIENT_SECRET }}
+          environment-url: ${{ secrets.POWERPLATFORM_ENV }}
+          app-id: ${{ secrets.AZURE_CLIENT_ID }}
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
 
+      # ✅ Export solution
       - name: Export solution
-        uses: microsoft/powerplatform-actions@v1
+        uses: microsoft/powerplatform-actions/export-solution@v1.1.0
         with:
-          command: solution export
-          args: >-
-            --name P100-Electrical-Agent-Suite
-            --path ./exported-solution.zip
-            --managed false
+          environment-url: ${{ secrets.POWERPLATFORM_ENV }}
+          solution-name: P100-Electrical-Agent-Suite
+          managed: false
+          solution-output-file: exported-solution.zip
 
+      # ✅ Extract version from solution.xml
       - name: Extract solution version
         id: get_version
         run: |
@@ -40,6 +40,21 @@ jobs:
           echo "version=$version" >> $GITHUB_OUTPUT
         shell: pwsh
 
+      # ✅ Commit unpacked solution to repo
+      - name: Commit unpacked solution
+        run: |
+          git config --global user.name "Gareth Youens"
+          git config --global user.email "github-actions@github.com"
+          mkdir -Force ./solutions/P100-Electrical-Agent-Suite
+          Copy-Item -Path ./unpacked/* -Destination ./solutions/P100-Electrical-Agent-Suite -Recurse -Force
+          git add solutions/P100-Electrical-Agent-Suite
+          git commit -m "Exported solution version ${{ steps.get_version.outputs.version }}"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: pwsh
+
+      # ✅ Upload exported solution as artefact
       - name: Upload exported solution
         uses: actions/upload-artifact@v4
         with:
