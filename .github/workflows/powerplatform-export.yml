@@ -16,16 +16,16 @@ jobs:
       - name: Authenticate with Power Platform
         uses: microsoft/powerplatform-actions/authenticate-environment@v1.1.0
         with:
-          environment-url: ${{ secrets.POWERPLATFORM_ENV }}
-          app-id: ${{ secrets.AZURE_CLIENT_ID }}
-          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          environment-url: ${{ secrets.PP_ENVIRONMENT }}
+          app-id: ${{ secrets.PP_APP_ID }}
+          client-secret: ${{ secrets.PP_CLIENT_SECRET }}
+          tenant-id: ${{ secrets.PP_TENANT_ID }}
 
       # ✅ Export solution
       - name: Export solution
         uses: microsoft/powerplatform-actions/export-solution@v1.1.0
         with:
-          environment-url: ${{ secrets.POWERPLATFORM_ENV }}
+          environment-url: ${{ secrets.PP_ENVIRONMENT }}
           solution-name: P100-Electrical-Agent-Suite
           managed: false
           solution-output-file: exported-solution.zip
@@ -51,7 +51,7 @@ jobs:
           git commit -m "Exported solution version ${{ steps.get_version.outputs.version }}"
           git push
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_PROJECTS_TOKEN }}
         shell: pwsh
 
       # ✅ Upload exported solution as artefact
