@@ -16,6 +16,8 @@
   - [2.4) Local optionsets catalog](#24-local-optionsets-catalog)
   - [3) How it’s put together](#3-how-its-put-together)
   - [4) Edge cases \& verification](#4-edge-cases--verification)
+  - [5) Worked example](#5-worked-example)
+  - [}](#)
     - [Why this change?](#why-this-change)
 
 JSON source (snapshot)XML target (unpacked)File path (output)CardinalityNotes / DefaultsEntity logical nameEntity name elementout/entities/<logicalName>.xml → /Entity/Name1Also drives the output filename| Entity display name | Entity display label | `/Entity/DisplayName` | 1 | Defaults to `logicalName` if absent |
@@ -124,7 +126,21 @@ Duplication by design: the same <LocalOptionSet> appears:
 - Allowed field types: string, number, boolean, date, lookup, optionset (others error)
 - Defaults are explicit in XML (string/number/date/boolean as described).
 
+## 5) Worked example
+**Input JSON**
 
+{
+  "logicalName": "p108_variant_type",
+  "fields": [
+    { "name": "variant_category", "type": "optionset", "optionset": "variant_category_set" }
+  ],
+  "optionsets": [
+    { "name": "variant_category_set", "options": [
+      { "value": 1, "label": "Standard" },
+      { "value": 2, "label": "Premium" }
+    ]}
+  ]
+}
 ---
 
 ### Why this change?
