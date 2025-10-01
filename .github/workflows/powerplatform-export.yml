@@ -11,22 +11,23 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Install PAC and update PATH for next steps
+      # Install PAC via MSI
       - name: Install Power Platform CLI
         run: |
           Invoke-WebRequest -Uri https://aka.ms/PowerAppsCLIInstaller -OutFile pac.msi
           Start-Process msiexec.exe -Wait -ArgumentList '/I pac.msi /quiet /qn /norestart'
-          echo "C:\Program Files (x86)\Microsoft Power Platform CLI" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         shell: pwsh
 
-      # Verify PAC in a new step
+      # Verify PAC using full path
       - name: Verify PAC installation
-        run: pac --version
+        run: |
+          & "C:\Program Files (x86)\Microsoft Power Platform CLI\pac.exe" --version
         shell: pwsh
 
+      # Authenticate with Power Platform
       - name: Authenticate with Power Platform
         run: |
-          pac auth create `
+          & "C:\Program Files (x86)\Microsoft Power Platform CLI\pac.exe" auth create `
             --environment $env:POWERPLATFORM_ENV `
             --tenant $env:AZURE_TENANT_ID `
             --applicationId $env:AZURE_CLIENT_ID `
@@ -38,14 +39,16 @@ jobs:
           AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
 
+      # Export solution
       - name: Export solution
         run: |
-          pac solution export `
+          & "C:\Program Files (x86)\Microsoft Power Platform CLI\pac.exe" solution export `
             --name P100-Electrical-Agent-Suite `
             --path ./exported-solution.zip `
             --managed false
         shell: pwsh
 
+      # Extract version
       - name: Extract solution version
         id: get_version
         run: |
@@ -55,6 +58,7 @@ jobs:
           echo "version=$version" >> $env:GITHUB_OUTPUT
         shell: pwsh
 
+      # Upload artefact
       - name: Upload exported solution
         uses: actions/upload-artifact@v4
         with:
