@@ -1,4 +1,4 @@
-name: Export and Commit Power Platform Solution
+name: Power Platform Export
 
 on:
   workflow_dispatch:
