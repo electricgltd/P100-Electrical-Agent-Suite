@@ -8,14 +8,17 @@ jobs:
     runs-on: windows-latest
 
     steps:
+      # ✅ Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # ✅ Install Power Platform CLI
       - name: Install Power Platform CLI
         run: |
           dotnet tool install --global Microsoft.PowerPlatform.CLI.Tool
-          echo "##[add-path]$HOME/.dotnet/tools"
+          echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
+      # ✅ Authenticate using secrets
       - name: Authenticate with Power Platform
         run: |
           pac auth create --url ${{ secrets.DEV_ENV_URL }} `
@@ -24,16 +27,19 @@ jobs:
                           --clientSecret ${{ secrets.CLIENT_SECRET }}
           pac auth select --index 1
 
+      # ✅ Ensure solution folder exists
       - name: Create solution folder if missing
         run: |
           if (!(Test-Path "solution")) { mkdir solution }
 
+      # ✅ Export the solution
       - name: Export Solution
         run: |
           pac solution export --name P100-Electrical-Agent-Suite `
                               --path solution/solution.zip `
                               --overwrite
 
+      # ✅ Upload as artifact for downstream workflows
       - name: Upload Exported Solution as Artifact
         uses: actions/upload-artifact@v4
         with:
