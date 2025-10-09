@@ -1,4 +1,4 @@
-P100 Electrical Agent Suite – Project Setup & ALM Guide
+P100 Electrical Suite EGL – Project Setup & ALM Guide
 This guide standardises how we plan work (GitHub Projects), label issues (Agent/Area), and move our Dataverse solution through environments via GitHub Actions.
 
 Single source of truth: GitHub Issues + Project
@@ -7,7 +7,7 @@ Dataverse solution owner: DCA (Design & Costing Agent)
 Solution folder: /solutions/DesignAndCosting (unpacked)
 
 
-1) Planning Fields (Project #2)
+## 1) Planning Fields (Project #2)
 Add these Project fields (single source for dates/effort/priority):
 
 Priority (Single select): Critical, important, non-critical
@@ -21,7 +21,7 @@ Actual (h) (Number)
 
 
 2) Views (Board / Table / Roadmap)
-Use the matrix below to configure your Project views. (Board doesn’t support filters; use Table for filtered lists.)
+Use the matrix below to configure your Project views. (Board doesn't support filters; use Table for filtered lists.)
 
 ## 2) Views (Board / Table / Roadmap)
 
@@ -59,7 +59,7 @@ Date field = Target date (top‑right of timeline).
 Group by = Priority.
 Sort = Target date (ascending).
 
-3) Labelling Rules (Agent & Area)
+## 3) Labelling Rules (Agent & Area)
 Apply exactly one Agent label and one or more Area labels to every Issue.
 Agent (who owns it)
 
@@ -94,7 +94,7 @@ Examples
 | Fault finding on car charger install   | `agent:EA`  | `area:Fault Finding`, `area:Car Charger`, `area:Install` |
 | Structure orchestration between agents | `agent:PA`  | `area:Cross Agent Orchestration`                         |
 
-4) Charts (optional but useful)
+## 4) Charts (optional but useful)
 Create a couple of Charts in the Project to get fast insights:
 
 Items by Priority → Measure: Item count → Slice by: Priority
@@ -103,7 +103,7 @@ Estimate vs Actual → Type: Stacked bar → Measures: Estimate (h) + Actual (h)
 
 For Agent/Area analysis, use Slice by = Labels and select agent:* or the relevant area:*.
 
-5) ALM (Dataverse) via GitHub Actions
+## 5) ALM (Dataverse) via GitHub Actions
 We keep the unpacked solution under /solutions/DesignAndCosting.
 Workflows use GitHub Secrets (no secrets in repo).
 Secrets to add (Repo → Settings → Secrets and variables → Actions → New repository secret)
@@ -119,7 +119,7 @@ Use the canonical names below. Keep values secret — do not store them in the r
 
  
 
-ℹ️ SOLUTION_NAME below is set to DesignAndCosting to match your folder. This must be your solution’s unique name (not display name).
+ℹ️ SOLUTION_NAME below is set to DesignAndCosting to match your folder. This must be your solution's unique name (not display name).
 
 Workflow A – Sync Dev to Git (Export + Unpack)
 Save as: .github/workflows/alm-sync-dev.yml
@@ -217,7 +217,7 @@ Add a similar job for Prod later by duplicating the Test job and swapping PPAC_T
 
  
 
-6) Architecture (Mermaid)
+## 6) Architecture (Mermaid)
 ```mermaid
 flowchart TB
   GH_Issues[GitHub Issues]
@@ -246,66 +246,3 @@ flowchart TB
   EA --> DCA
   DCA --> Solution
   PA --> GH_Project
-```
-
-7) One Copy‑Paste Block (PowerShell)
-Use this once to verify fields, link Project, and seed your labels (idempotent: safe to re-run).
-
-If you’re already logged in with gh, you can skip gh auth login and keep gh auth refresh.
-
-# --- Auth & Project link ---
-gh auth login
-gh auth refresh -s project
-
-# Open Project #2 (sanity check)
-gh project view 2 --owner electricgltd --web
-
-# Link repo to Project #2 (safe if already linked)
-gh project link 2 --owner electricgltd --repo electricgltd/P100-Electrical-Agent-Suite
-
-# Ensure planning fields exist (ignore "already exists" messages)
-gh project field-create 2 --owner electricgltd --name "Target date"  --data-type DATE           2>$null
-gh project field-create 2 --owner electricgltd --name "Estimate (h)" --data-type NUMBER         2>$null
-gh project field-create 2 --owner electricgltd --name "Actual (h)"   --data-type NUMBER         2>$null
-gh project field-create 2 --owner electricgltd --name "Priority"     --data-type SINGLE_SELECT --options "Critical,important,non-critical" 2>$null
-
-# --- Labels (single source of truth) ---
-We keep label definitions in the repository so they can be reviewed, updated, and re-seeded easily.
-
-Files:
-
-- `.github/labels.yml` — canonical list of labels (name, color, description).
-- `scripts/seed-labels.ps1` — small PowerShell helper that reads the YAML and calls `gh` to create missing labels (idempotent).
-
-To seed or refresh labels locally (PowerShell / Windows):
-
-```powershell
-# run from repository root
-pwsh ./scripts/seed-labels.ps1 -Owner electricgltd -Repo P100-Electrical-Agent-Suite
-```
-
-Or on any platform with PowerShell 7+ and `gh` installed change `-Owner`/`-Repo` as required. The script ignores already-existing labels and is safe to re-run.
-
-If you prefer a single `gh` one-liner, you can inspect `.github/labels.yml` and use the commands shown there.
-
-# Final open
-gh project view 2 --owner electricgltd --web
-
-8) Workflow Checklists
-Workflows (Project → ⋯ → Workflows)
-
-✅ Auto‑add items from electricgltd/P100-Electrical-Agent-Suite
-✅ When Issue closes → Status = Done
-✅ Auto‑archive Done after N days
-
-Saved Views
-
-✅ Board (group by Status)
-✅ Backlog (Table; group by Priority; filter Status != Done)
-✅ Roadmap (Target date; group by Priority)
-
-9) Conventions
-
-Keep Issues short and actionable; use checklists for sub‑steps.
-Put doc links (OneDrive) and acceptance notes in the Issue body.
-Keep time data in fields (Target date, Estimate/Actual)—not in titles.

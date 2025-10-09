@@ -1,0 +1,122 @@
+{
+  "type": "AdaptiveCard",
+  "version": "1.5",
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "🧠 Copilot Conversation Summary",
+      "weight": "Bolder",
+      "size": "Large",
+      "speak": "Copilot Conversation Summary"
+    },
+    {
+      "type": "TextBlock",
+      "text": "Planner Task: {{plannerNameOrId}}",
+      "wrap": true,
+      "speak": "Planner Task is {{plannerNameOrId}}"
+    },
+    {
+      "type": "TextBlock",
+      "text": "📌 Title: {{conversationTitle}}",
+      "wrap": true,
+      "speak": "Conversation title is {{conversationTitle}}"
+    },
+    {
+      "type": "TextBlock",
+      "text": "📆 Date & Time: {{conversationDateTime}}",
+      "wrap": true,
+      "speak": "Date and time of conversation is {{conversationDateTime}}"
+    },
+    {
+      "type": "TextBlock",
+      "text": "Initiator: {{initiator}}",
+      "wrap": true,
+      "speak": "Conversation initiated by {{initiator}}"
+    },
+    {
+      "type": "TextBlock",
+      "text": "Agent Involved: {{agentName}}",
+      "wrap": true,
+      "speak": "Agent involved is {{agentName}}"
+    },
+    {
+      "type": "TextBlock",
+      "text": "Context/Project: {{projectContext}}",
+      "wrap": true,
+      "speak": "Project context is {{projectContext}}"
+    },
+    {
+      "type": "TextBlock",
+      "text": "🔍 Summary",
+      "weight": "Bolder",
+      "speak": "Summary section"
+    },
+    {
+      "type": "TextBlock",
+      "text": "{{summary}}",
+      "wrap": true,
+      "speak": "Summary content is {{summary}}"
+    },
+    {
+      "type": "TextBlock",
+      "text": "📥 Key Inputs",
+      "weight": "Bolder",
+      "speak": "Key inputs section"
+    },
+    {
+      "type": "TextBlock",
+      "text": "{{keyInputs}}",
+      "wrap": true,
+      "speak": "Key inputs are {{keyInputs}}"
+    },
+    {
+      "type": "TextBlock",
+      "text": "🤖 Copilot Suggestions",
+      "weight": "Bolder",
+      "speak": "Copilot suggestions section"
+    },
+    {
+      "type": "TextBlock",
+      "text": "{{suggestions}}",
+      "wrap": true,
+      "speak": "Suggestions are {{suggestions}}"
+    },
+    {
+      "type": "TextBlock",
+      "text": "📊 Decisions Made",
+      "weight": "Bolder",
+      "speak": "Decisions made section"
+    },
+    {
+      "type": "TextBlock",
+      "text": "{{decisions}}",
+      "wrap": true,
+      "speak": "Decisions made are {{decisions}}"
+    },
+    {
+      "type": "TextBlock",
+      "text": "🛠️ Follow-Up Actions",
+      "weight": "Bolder",
+      "speak": "Follow-up actions section"
+    },
+    {
+      "type": "TextBlock",
+      "text": "{{followUpActions}}",
+      "wrap": true,
+      "speak": "Follow-up actions are {{followUpActions}}"
+    },
+    {
+      "type": "TextBlock",
+      "text": "📎 Attachments / Links",
+      "weight": "Bolder",
+      "speak": "Attachments and links section"
+    },
+    {
+      "type": "TextBlock",
+      "text": "{{attachments}}",
+      "wrap": true,
+      "speak": "Attachments and links are {{attachments}}"
+    }
+  ]
+}
