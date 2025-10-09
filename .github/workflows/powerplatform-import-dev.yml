@@ -28,9 +28,9 @@ jobs:
       - name: Authenticate with Power Platform
         run: |
           pac auth create `
-            --tenant ${{ secrets.PP_TENANT_ID }} `
-            --applicationId ${{ secrets.PP_APP_ID }} `
-            --clientSecret ${{ secrets.PP_CLIENT_SECRET }}
+            --tenant ${{ secrets.PPAC_TENANT_ID }} `
+            --applicationId ${{ secrets.PPAC_CLIENT_ID }} `
+            --clientSecret ${{ secrets.PPAC_CLIENT_SECRET }}
 
       # ✅ Download solution artifact
       - name: Download solution artifact
@@ -44,7 +44,7 @@ jobs:
         run: |
           pac solution import `
             --path ./solution/P100-Electrical-Agent-Suite.zip `
-            --environment ${{ secrets.PP_ENVIRONMENT }} `
+            --environment ${{ secrets.PPAC_ENVIRONMENT_URL_DEV }} `
             --overwrite `
             --publish-changes
 
@@ -52,4 +52,4 @@ jobs:
       - name: Verify solution import status
         run: |
           echo "Checking solution status..."
-          pac solution list --environment ${{ secrets.PP_ENVIRONMENT }} | findstr "P100-Electrical-Agent-Suite"
+          pac solution list --environment ${{ secrets.PPAC_ENVIRONMENT_URL_DEV }} | findstr "P100-Electrical-Agent-Suite"

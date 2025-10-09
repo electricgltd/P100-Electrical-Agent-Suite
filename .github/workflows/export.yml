@@ -52,9 +52,9 @@ jobs:
           env_url: ${{ secrets.PP_DEV_URL }}
           pp_dev_url: ${{ secrets.PP_DEV_URL }}
           pp_test_url: ${{ secrets.PP_TEST_URL }}
-          pp_tenant_id: ${{ secrets.PP_TENANT_ID }}
-          pp_app_id: ${{ secrets.PP_APP_ID }}
-          pp_client_secret: ${{ secrets.PP_CLIENT_SECRET }}
+          pp_tenant_id: ${{ secrets.PPAC_TENANT_ID }}
+          pp_app_id: ${{ secrets.PPAC_CLIENT_ID }}
+          pp_client_secret: ${{ secrets.PPAC_CLIENT_SECRET }}
 
       # Ensure output folder exists
       - name: Prepare output folder
@@ -65,9 +65,9 @@ jobs:
         uses: microsoft/powerplatform-actions/export-solution@v1
         with:
           environment-url: ${{ secrets.PP_DEV_URL }}
-          app-id: ${{ secrets.PP_APP_ID }}
-          client-secret: ${{ secrets.PP_CLIENT_SECRET }}
-          tenant-id: ${{ secrets.PP_TENANT_ID }}
+          app-id: ${{ secrets.PPAC_CLIENT_ID }}
+          client-secret: ${{ secrets.PPAC_CLIENT_SECRET }}
+          tenant-id: ${{ secrets.PPAC_TENANT_ID }}
           solution-name: DesignAndCosting
           solution-output-file: out/DesignAndCosting.zip
           managed: false

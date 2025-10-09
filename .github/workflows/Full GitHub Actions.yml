@@ -48,7 +48,7 @@ jobs:
       # Determine which environment URL to use (Dev or Test)
       - name: Select target environment
         env:
-          PP_ENVIRONMENT: ${{ secrets.PP_ENVIRONMENT }}
+          PP_ENVIRONMENT: ${{ secrets.PPAC_ENVIRONMENT_URL_DEV }}
           PP_DEV_URL: ${{ secrets.PP_DEV_URL }}
           PP_TEST_URL: ${{ secrets.PP_TEST_URL }}
         run: |
@@ -76,16 +76,16 @@ jobs:
           env_url: ${{ secrets.PP_DEV_URL }}
           pp_dev_url: ${{ secrets.PP_DEV_URL }}
           pp_test_url: ${{ secrets.PP_TEST_URL }}
-          pp_tenant_id: ${{ secrets.PP_TENANT_ID }}
-          pp_app_id: ${{ secrets.PP_APP_ID }}
-          pp_client_secret: ${{ secrets.PP_CLIENT_SECRET }}
+          pp_tenant_id: ${{ secrets.PPAC_TENANT_ID }}
+          pp_app_id: ${{ secrets.PPAC_CLIENT_ID }}
+          pp_client_secret: ${{ secrets.PPAC_CLIENT_SECRET }}
 
       # 3. Authenticate with Power Platform
       - name: Authenticate with Power Platform
         env:
-          PP_TENANT_ID: ${{ secrets.PP_TENANT_ID }}
-          PP_APP_ID: ${{ secrets.PP_APP_ID }}
-          PP_CLIENT_SECRET: ${{ secrets.PP_CLIENT_SECRET }}
+          PP_TENANT_ID: ${{ secrets.PPAC_TENANT_ID }}
+          PP_APP_ID: ${{ secrets.PPAC_CLIENT_ID }}
+          PP_CLIENT_SECRET: ${{ secrets.PPAC_CLIENT_SECRET }}
         run: |
           pac auth create --url "$env:ENV_URL" --tenant "$env:PP_TENANT_ID" --applicationId "$env:PP_APP_ID" --clientSecret "$env:PP_CLIENT_SECRET"
 

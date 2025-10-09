@@ -18,18 +18,18 @@ jobs:
       - name: WhoAmI (fail fast on creds)
         uses: microsoft/powerplatform-actions/who-am-i@v1.9.0
         with:
-          environment-url: ${{ secrets.PP_ENVIRONMENT }}
-          app-id:          ${{ secrets.PP_APP_ID }}
-          tenant-id:       ${{ secrets.PP_TENANT_ID }}
-          client-secret:   ${{ secrets.PP_CLIENT_SECRET }}
+          environment-url: ${{ secrets.PPAC_ENVIRONMENT_URL_DEV }}
+          app-id:          ${{ secrets.PPAC_CLIENT_ID }}
+          tenant-id:       ${{ secrets.PPAC_TENANT_ID }}
+          client-secret:   ${{ secrets.PPAC_CLIENT_SECRET }}
 
       - name: Export Solution
         uses: microsoft/powerplatform-actions/export-solution@v1.9.0
         with:
-          environment-url:     ${{ secrets.PP_ENVIRONMENT }}
-          app-id:               ${{ secrets.PP_APP_ID }}
-          tenant-id:            ${{ secrets.PP_TENANT_ID }}
-          client-secret:        ${{ secrets.PP_CLIENT_SECRET }}
+          environment-url:     ${{ secrets.PPAC_ENVIRONMENT_URL_DEV }}
+          app-id:               ${{ secrets.PPAC_CLIENT_ID }}
+          tenant-id:            ${{ secrets.PPAC_TENANT_ID }}
+          client-secret:        ${{ secrets.PPAC_CLIENT_SECRET }}
           solution-name:        ${{ secrets.PP_SOLUTION_NAME }}
           solution-output-file: 'out/${{ secrets.PP_SOLUTION_NAME }}.zip'
           working-directory:    'out'
